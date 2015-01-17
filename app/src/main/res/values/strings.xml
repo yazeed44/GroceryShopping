@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">المقاضي</string>
+    <string name="desc_category_thumbnail">لمحة للتصنيف</string>
+    <string name="content_new_update">هنالك تحديث جديد , هل تريد التحديث ؟</string>
+    <string name="title_new_update">تحديث جديد</string>
+    <string name="pos_btn_update_dialog">نعم</string>
+    <string name="neg_btn_update_dialog">لا</string>
+    <string name="title_loading_db">إنتظر من فضلك</string>
+    <string name="content_loading_db">جاري تحميل البيانات</string>
+    <string name="title_action_search">البحث</string>
+    <string name="desc_reset_search">Reset search text</string>
+    <string name="hint_search_items">أكتب اسم الغرض</string>>
+
+</resources>

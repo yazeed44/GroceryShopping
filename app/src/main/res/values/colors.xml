@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary_text">#FFFFFF</color>
+    <color name="secondary_text">#b3ffffff</color>
+    <color name="divider_color">#B6B6B6</color>
+
+    <color name="primary">#FF5722</color>
+    <color name="primary_dark">#F4511E</color>
+    <color name="accent">#FF9E80</color>
+
+    <color name="dialog_pos_btn_background_color">@color/primary_dark</color>
+    <color name="dialog_pos_btn_text_color">@color/primary_text</color>
+
+    <color name="category_name_background">#1fffffff</color>
+</resources>
