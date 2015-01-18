@@ -51,18 +51,30 @@ public class ItemsTabsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (mHasOpenChosenCategory) {
+            return;
+        }
+
         mItemsPager.setCurrentItem(0, true);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 mItemsPager.setCurrentItem(DBUtil.getCategories().indexOf(mChosenCategory), true);
                 mItemsTabs.notifyDataSetChanged();
+                mHasOpenChosenCategory = true;
             }
         }, 100);
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mHasOpenChosenCategory = false;
+    }
 
     public void setCheckListener(final ItemsFragment.OnCheckItemListener listener) {
         this.mCheckListener = listener;

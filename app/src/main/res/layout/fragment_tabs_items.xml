@@ -13,6 +13,7 @@
         android:background="?attr/colorPrimary"
         android:textColor="#fff"
         android:textSize="18sp"
+        app:pstsIndicatorColor="#FFF"
         app:pstsShouldExpand="false"
 
         />
