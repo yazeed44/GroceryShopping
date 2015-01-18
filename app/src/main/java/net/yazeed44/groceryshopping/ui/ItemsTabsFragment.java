@@ -35,6 +35,7 @@ public class ItemsTabsFragment extends Fragment {
         final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
         final Category chosenCategory = DBUtil.getCategories().get(categoryIndex);
 
+        //Test
 
         mItemsPager.setAdapter(new ItemsPagerAdapter(getFragmentManager()));
         //itemsPager.setCurrentItem(DBUtil.getCategories().indexOf(chosenCategory), false);
@@ -59,7 +60,7 @@ public class ItemsTabsFragment extends Fragment {
         private ItemsFragment getInstance(final int position) {
 
             if (!hasSelectedTab) {
-                mItemsPager.setCurrentItem();
+                //  mItemsPager.setCurrentItem();
             }
 
             final ItemsFragment fragment = new ItemsFragment();

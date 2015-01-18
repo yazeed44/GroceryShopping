@@ -21,7 +21,7 @@ import net.yazeed44.groceryshopping.utils.ViewUtil;
 public class MainActivity extends BaseActivity implements CategoriesFragment.onClickCategoryListener, ItemsFragment.OnCheckItemListener {
 
 
-    public static final String CATEGORY_INDEX_KEY = "categoryKey";
+    public static final String CATEGORY_INDEX_KEY = "categoryIndexKey";
     public static SparseArray<Item> sCheckedItems = new SparseArray<>();
     private CategoriesFragment mCategoriesFragment;
     private SearchView mSearchView;
