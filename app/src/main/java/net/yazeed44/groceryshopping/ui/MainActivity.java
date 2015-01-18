@@ -155,8 +155,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
     public void onClickCategory(Category category) {
         //TODO add animation
 
-
-        Log.d("onClickCategory", "Category" + category.name + "  has been clicked");
         showItems(category);
     }
 
@@ -166,13 +164,14 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         if (mItemsFragment == null) {
             mItemsFragment = new ItemsTabsFragment();
             mItemsFragment.setCheckListener(this);
+            Log.d("showItems", "Items Fragment has been initalized");
         }
 
 
-        final Bundle itemBundle = new Bundle();
-        itemBundle.putInt(CATEGORY_INDEX_KEY, DBUtil.getCategories().indexOf(category));
+        final Bundle chosenCategoryBundle = new Bundle();
+        chosenCategoryBundle.putInt(CATEGORY_INDEX_KEY, DBUtil.getCategories().indexOf(category));
 
-        mItemsFragment.setArguments(itemBundle);
+        mItemsFragment.setArguments(chosenCategoryBundle);
 
 
         getSupportFragmentManager().beginTransaction()

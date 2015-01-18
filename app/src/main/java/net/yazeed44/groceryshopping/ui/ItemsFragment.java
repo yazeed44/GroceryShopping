@@ -44,6 +44,7 @@ public class ItemsFragment extends Fragment {
         mCategory = DBUtil.getCategories().get(categoryIndex);
         mItemsGridView = (GridView) inflater.inflate(R.layout.fragment_items, container, false);
         mItemsArray = getItems();
+        Log.d("ItemsFragment", "Loading  " + mCategory.name);
         mAdapter = createAdapter();
         mItemsGridView.setAdapter(mAdapter);
     }
@@ -62,9 +63,9 @@ public class ItemsFragment extends Fragment {
     }
 
     public static interface OnCheckItemListener {
-        public void onCheck(final Item item);
+        void onCheck(final Item item);
 
-        public void onUnCheck(final Item item);
+        void onUnCheck(final Item item);
     }
 
     protected class ItemsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
@@ -75,6 +76,7 @@ public class ItemsFragment extends Fragment {
 
         @Override
         public int getCount() {
+            Log.d("ItemsAdapter", "Loading  " + mCategory.name + "  size is  " + mItemsArray.size());
             return mItemsArray.size();
 
         }
@@ -86,7 +88,7 @@ public class ItemsFragment extends Fragment {
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return mItemsArray.get(position).key;
         }
 
         @Override

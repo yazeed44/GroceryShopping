@@ -1,11 +1,13 @@
 package net.yazeed44.groceryshopping.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,29 +26,43 @@ public class ItemsTabsFragment extends Fragment {
 
     private ItemsFragment.OnCheckItemListener mCheckListener;
     private ViewPager mItemsPager;
-    private boolean hasSelectedTab = false;
-
+    private Category mChosenCategory;
+    private PagerSlidingTabStrip mItemsTabs;
+    private boolean mHasOpenChosenCategory = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View tabsLayout = inflater.inflate(R.layout.fragment_tabs_items, container, false);
-        final PagerSlidingTabStrip itemsTabs = (PagerSlidingTabStrip) tabsLayout.findViewById(R.id.items_tabs);
+        mItemsTabs = (PagerSlidingTabStrip) tabsLayout.findViewById(R.id.items_tabs);
         mItemsPager = (ViewPager) tabsLayout.findViewById(R.id.items_pager);
         final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
-        final Category chosenCategory = DBUtil.getCategories().get(categoryIndex);
-
-        //Test
-
-        mItemsPager.setAdapter(new ItemsPagerAdapter(getFragmentManager()));
-        //itemsPager.setCurrentItem(DBUtil.getCategories().indexOf(chosenCategory), false);
+        mChosenCategory = DBUtil.getCategories().get(categoryIndex);
 
 
-        itemsTabs.setViewPager(mItemsPager);
-        itemsTabs.notifyDataSetChanged();
+        mItemsPager.setAdapter(new ItemsPagerAdapter(getChildFragmentManager()));
+
+        mItemsTabs.setViewPager(mItemsPager);
 
 
         return tabsLayout;
+
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mItemsPager.setCurrentItem(0, true);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mItemsPager.setCurrentItem(DBUtil.getCategories().indexOf(mChosenCategory), true);
+                mItemsTabs.notifyDataSetChanged();
+            }
+        }, 100);
+
+    }
+
 
     public void setCheckListener(final ItemsFragment.OnCheckItemListener listener) {
         this.mCheckListener = listener;
@@ -59,15 +75,12 @@ public class ItemsTabsFragment extends Fragment {
 
         private ItemsFragment getInstance(final int position) {
 
-            if (!hasSelectedTab) {
-                //  mItemsPager.setCurrentItem();
-            }
-
             final ItemsFragment fragment = new ItemsFragment();
             final Bundle bundle = new Bundle();
             bundle.putInt(MainActivity.CATEGORY_INDEX_KEY, position);
             fragment.setArguments(bundle);
             fragment.setListener(mCheckListener);
+            Log.d("ItemsPagerAdapter", "Fragment  " + position + " is showing right now");
 
             return fragment;
         }
