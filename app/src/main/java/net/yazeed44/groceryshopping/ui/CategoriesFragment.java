@@ -3,7 +3,6 @@ package net.yazeed44.groceryshopping.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by yazeed44 on 12/31/14.
  */
-public class CategoriesFragment extends Fragment {
+public class CategoriesFragment extends BaseFragment {
 
 
     private GridView mCategoriesList;
@@ -47,6 +46,10 @@ public class CategoriesFragment extends Fragment {
         return mCategoriesList;
     }
 
+    @Override
+    protected boolean shouldDisplayUp() {
+        return false;
+    }
 
     private void setupAdapter() {
         final CategoriesAdapter adapter = new CategoriesAdapter();

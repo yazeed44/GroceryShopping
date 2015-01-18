@@ -21,7 +21,7 @@ import net.yazeed44.groceryshopping.utils.DBUtil;
 /**
  * Created by yazeed44 on 1/16/15.
  */
-public class ItemsTabsFragment extends Fragment {
+public class ItemsTabsFragment extends BaseFragment {
 
 
     private ItemsFragment.OnCheckItemListener mCheckListener;

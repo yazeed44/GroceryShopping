@@ -66,7 +66,7 @@ public class SearchItemsFragment extends ItemsFragment {
                     final ArrayList<Item> filteredItems = new ArrayList<>();
 
                     for (final Item item : mItems) {
-                        if (item.name.contains(constraint)) {
+                        if (item.name.startsWith(constraint.toString())) {
                             Log.d(TAG, "Got  " + item.name);
                             filteredItems.add(item);
                         }
@@ -99,4 +99,6 @@ public class SearchItemsFragment extends ItemsFragment {
             }
         }
     }
+
+
 }

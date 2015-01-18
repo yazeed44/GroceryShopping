@@ -1,8 +1,6 @@
 package net.yazeed44.groceryshopping.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by yazeed44 on 1/1/15.
  */
-public class ItemsFragment extends Fragment {
+public class ItemsFragment extends BaseFragment {
 
     protected ArrayList<Item> mItemsArray;
     protected ItemsAdapter mAdapter;
@@ -40,16 +38,16 @@ public class ItemsFragment extends Fragment {
 
 
     private void initGridView(final LayoutInflater inflater, final ViewGroup container) {
-        final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
-        mCategory = DBUtil.getCategories().get(categoryIndex);
+
         mItemsGridView = (GridView) inflater.inflate(R.layout.fragment_items, container, false);
         mItemsArray = getItems();
-        Log.d("ItemsFragment", "Loading  " + mCategory.name);
         mAdapter = createAdapter();
         mItemsGridView.setAdapter(mAdapter);
     }
 
     protected ArrayList<Item> getItems() {
+        final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
+        mCategory = DBUtil.getCategories().get(categoryIndex);
         return mCategory.getItems();
     }
 
@@ -76,7 +74,6 @@ public class ItemsFragment extends Fragment {
 
         @Override
         public int getCount() {
-            Log.d("ItemsAdapter", "Loading  " + mCategory.name + "  size is  " + mItemsArray.size());
             return mItemsArray.size();
 
         }
@@ -152,7 +149,6 @@ public class ItemsFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.d("onItemClick", "Click event fired");
             final ViewHolder holder = createHolder(view);
             final Item item = mItemsArray.get(position);
 

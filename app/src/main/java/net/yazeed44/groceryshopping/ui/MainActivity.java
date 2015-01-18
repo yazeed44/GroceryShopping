@@ -7,6 +7,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -71,20 +72,20 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
     private void setupSearchView() {
         mSearchView.setQueryHint(getResources().getString(R.string.hint_search_items));
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSearchFragment();
+
+            }
+        });
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             private void query(final String query) {
                 //TODO
+                Log.d("setupSearchView", "Query   " + query);
+                mSearchItemsFragment.query(query);
 
-                if (mSearchItemsFragment == null || !mSearchItemsFragment.isVisible()) {
-                    showSearchFragment();
-                }
-
-
-                if (mSearchItemsFragment.isVisible()) {
-                    Log.d("setupSearchView", "Query   " + query);
-                    mSearchItemsFragment.query(query);
-                }
 
 
             }
@@ -102,6 +103,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
             }
         });
 
+
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -118,6 +120,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         //TODO Add animations
         if (mSearchItemsFragment == null) {
             mSearchItemsFragment = new SearchItemsFragment();
+            mSearchItemsFragment.setListener(this);
         }
 
         getSupportFragmentManager().beginTransaction()
@@ -178,8 +181,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
                 .replace(R.id.main_container, mItemsFragment)
                 .addToBackStack(null)
                 .commit();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //  getSupportActionBar().setTitle(category.name);
     }
 
     @Override
@@ -192,6 +193,12 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         } else if (mSearchItemsFragment != null && mSearchItemsFragment.isVisible()) {
+
+            getSupportFragmentManager().popBackStack();
+            mSearchView.onActionViewCollapsed();
+
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         } else {
             super.onBackPressed();
