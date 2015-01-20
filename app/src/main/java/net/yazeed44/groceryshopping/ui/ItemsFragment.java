@@ -119,6 +119,7 @@ public class ItemsFragment extends BaseFragment {
 
             if (isChecked(item)) {
                 holder.checkBox.setChecked(true);
+
             } else {
                 holder.checkBox.setChecked(false);
             }
@@ -130,9 +131,9 @@ public class ItemsFragment extends BaseFragment {
         private boolean isChecked(final Item item) {
 
             boolean isChecked = false;
-            for (int index = 0; index < MainActivity.sCheckedItems.size(); index++) {
+            for (final Item arrayItem : MainActivity.sCheckedItems) {
 
-                if (item.key == MainActivity.sCheckedItems.valueAt(index).key) {
+                if (item.key == arrayItem.key) {
                     isChecked = true;
                 }
             }

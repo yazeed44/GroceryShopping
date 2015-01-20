@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -18,16 +18,20 @@ import net.yazeed44.groceryshopping.utils.DBUtil;
 import net.yazeed44.groceryshopping.utils.Item;
 import net.yazeed44.groceryshopping.utils.ViewUtil;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends BaseActivity implements CategoriesFragment.onClickCategoryListener, ItemsFragment.OnCheckItemListener {
 
 
     public static final String CATEGORY_INDEX_KEY = "categoryIndexKey";
-    public static SparseArray<Item> sCheckedItems = new SparseArray<>();
+    public static ArrayList<Item> sCheckedItems = new ArrayList<>();
     private CategoriesFragment mCategoriesFragment;
     private SearchView mSearchView;
     private ItemsTabsFragment mItemsFragment;
     private SearchItemsFragment mSearchItemsFragment;
+    private View mShoppingCartView;
+    private TextView mShoppingCountTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +86,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             private void query(final String query) {
-                //TODO
                 Log.d("setupSearchView", "Query   " + query);
                 mSearchItemsFragment.query(query);
-
-
 
             }
 
@@ -132,11 +133,18 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_search, menu);
+        getMenuInflater().inflate(R.menu.menu_shopping_cart, menu);
 
 
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         setupSearchView();
+
+        mShoppingCartView = MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
+        mShoppingCountTextView = (TextView) mShoppingCartView.findViewById(R.id.action_shopping_cart_count);
+
+        updateShoppingCart();
 
         return true;
     }
@@ -212,17 +220,29 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
     }
 
 
+    private void updateShoppingCart() {
+
+        if (sCheckedItems.isEmpty()) {
+            mShoppingCountTextView.setVisibility(View.GONE);
+        } else {
+            mShoppingCountTextView.setVisibility(View.VISIBLE);
+            mShoppingCountTextView.setText(sCheckedItems.size() + "");
+        }
+
+    }
     @Override
     public void onCheck(Item item) {
-        sCheckedItems.put(item.key, item);
+        sCheckedItems.add(item);
         Log.d("onCheck", item.name + "  has been checked");
+        updateShoppingCart();
 
     }
 
     @Override
     public void onUnCheck(Item item) {
-        sCheckedItems.remove(item.key);
+        sCheckedItems.remove(item);
         Log.d("onUnCheck", item.name + "  has been Un checked");
+        updateShoppingCart();
 
 
     }

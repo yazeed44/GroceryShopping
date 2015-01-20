@@ -10,6 +10,9 @@
     <string name="content_loading_db">جاري تحميل البيانات</string>
     <string name="title_action_search">البحث</string>
     <string name="desc_reset_search">Reset search text</string>
-    <string name="hint_search_items">أكتب اسم الغرض</string>>
+    <string name="hint_search_items">أكتب اسم الغرض</string>
+    <string name="title_shopping_cart">عربة التسوق</string>
+    <string name="btn_review_item_put_note">وضع ملاحظة</string>
+    <string name="btn_review_item_put_amount">تحديد الكمية</string>>
 
 </resources>

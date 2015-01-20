@@ -1,7 +1,10 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -21,6 +24,12 @@ public class SearchItemsFragment extends ItemsFragment {
 
     public void query(final String query) {
         ((SearchAdapter) mAdapter).getFilter().filter(query);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        query("");
     }
 
     @Override
