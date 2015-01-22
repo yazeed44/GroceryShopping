@@ -1,5 +1,6 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -25,6 +26,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
 
     public static final String CATEGORY_INDEX_KEY = "categoryIndexKey";
+    public static final String CHOSEN_ITEM_KEY = "chosenItemsKey";
     public static ArrayList<Item> sCheckedItems = new ArrayList<>();
     private CategoriesFragment mCategoriesFragment;
     private SearchView mSearchView;
@@ -141,8 +143,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         setupSearchView();
 
-        mShoppingCartView = MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
-        mShoppingCountTextView = (TextView) mShoppingCartView.findViewById(R.id.action_shopping_cart_count);
+        //      mShoppingCartView = MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
+//        mShoppingCountTextView = (TextView) mShoppingCartView.findViewById(R.id.action_shopping_cart_count);
 
         updateShoppingCart();
 
@@ -155,12 +157,27 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+
+        switch (item.getItemId()) {
+
+
+            case R.id.action_shopping_cart:
+                openReviewItemsActivity();
+
+            default:
+                break;
+        }
 
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    private void openReviewItemsActivity() {
+        final Intent intent = new Intent(this, ReviewItemsActivity.class);
+        //  intent.putExtra(CHOSEN_ITEM_KEY,sCheckedItems);
+        startActivity(intent);
+    }
 
     @Override
     public void onClickCategory(Category category) {
@@ -221,15 +238,16 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
 
     private void updateShoppingCart() {
-
+/*
         if (sCheckedItems.isEmpty()) {
             mShoppingCountTextView.setVisibility(View.GONE);
         } else {
             mShoppingCountTextView.setVisibility(View.VISIBLE);
             mShoppingCountTextView.setText(sCheckedItems.size() + "");
         }
-
+*/
     }
+
     @Override
     public void onCheck(Item item) {
         sCheckedItems.add(item);

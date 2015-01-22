@@ -62,6 +62,7 @@ public class ItemsDB {
     public ArrayList<Item> getItems(final String categoryName) {
         final ArrayList<Item> items = new ArrayList<>();
 
+        //TODO catch the execption of no such table then force downloading a new DB
         final Cursor cursor = mDB.rawQuery("SELECT * FROM " + categoryName, null);
 
         cursor.moveToFirst();

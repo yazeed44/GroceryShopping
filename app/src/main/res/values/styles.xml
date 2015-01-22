@@ -17,5 +17,13 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
-    <style name="TextView" parent="TextAppearance.AppCompat"></style>
+    <style name="ReviewItemBtn" parent="TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ItemsMsgBtn" parent="TextAppearance.AppCompat.Button">
+
+    </style>
 </resources>

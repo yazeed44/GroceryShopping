@@ -36,7 +36,6 @@ public class ItemsFragment extends BaseFragment {
         return mItemsGridView;
     }
 
-
     private void initGridView(final LayoutInflater inflater, final ViewGroup container) {
 
         mItemsGridView = (GridView) inflater.inflate(R.layout.fragment_items, container, false);
@@ -118,14 +117,14 @@ public class ItemsFragment extends BaseFragment {
 
 
             if (isChecked(item)) {
-                holder.checkBox.setChecked(true);
+                holder.mItemCheckBox.setChecked(true);
 
             } else {
-                holder.checkBox.setChecked(false);
+                holder.mItemCheckBox.setChecked(false);
             }
 
-            holder.checkBox.setTypeface(ViewUtil.getRegularDefaultTypeface());
-            holder.checkBox.setText(item.name);
+            holder.mItemCheckBox.setTypeface(ViewUtil.getRegularDefaultTypeface());
+            holder.mItemCheckBox.setText(item.name);
         }
 
         private boolean isChecked(final Item item) {
@@ -144,7 +143,7 @@ public class ItemsFragment extends BaseFragment {
 
         private ViewHolder createHolder(final View convertView) {
             final ViewHolder holder = new ViewHolder();
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.item_checkbox);
+            holder.mItemCheckBox = (CheckBox) convertView.findViewById(R.id.item_checkbox);
             return holder;
         }
 
@@ -153,14 +152,14 @@ public class ItemsFragment extends BaseFragment {
             final ViewHolder holder = createHolder(view);
             final Item item = mItemsArray.get(position);
 
-            if (holder.checkBox.isChecked()) {
+            if (holder.mItemCheckBox.isChecked()) {
                 //Un check
                 mListener.onUnCheck(item);
-                holder.checkBox.setChecked(false);
+                holder.mItemCheckBox.setChecked(false);
             } else {
                 //check
                 mListener.onCheck(item);
-                holder.checkBox.setChecked(true);
+                holder.mItemCheckBox.setChecked(true);
             }
 
 
@@ -168,7 +167,7 @@ public class ItemsFragment extends BaseFragment {
 
 
         private class ViewHolder {
-            private CheckBox checkBox;
+            private CheckBox mItemCheckBox;
         }
     }
 }

@@ -7,10 +7,14 @@ import java.io.Serializable;
  */
 public final class Item implements Serializable {
 
+
+    public static final String DEFAULT_NOTE = "لايوجد";
+    private String note = DEFAULT_NOTE;
     private static int count = 0;
     public final String name;
     public final String combination;
     public final int key;
+    private float amount = 1;
 
     public Item(String name, String combination) {
         this.name = name;
@@ -24,4 +28,30 @@ public final class Item implements Serializable {
     }
 
 
+    public boolean isNoteValid() {
+        return !(getNote().equals(DEFAULT_NOTE));
+    }
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+
+        if (note.isEmpty()) {
+            this.note = DEFAULT_NOTE;
+            return;
+        }
+
+
+        this.note = note;
+    }
 }

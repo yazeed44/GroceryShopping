@@ -3,9 +3,7 @@ package net.yazeed44.groceryshopping.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -36,12 +34,9 @@ public final class ViewUtil {
         return new MaterialDialog.Builder(context)
                 .theme(Theme.LIGHT)
                 .typeface(getMediumTypeface(), getRegularDefaultTypeface())
+                .positiveColorRes(R.color.dialog_pos_btn_text_color)
+                .negativeColorRes(R.color.dialog_neg_btn_text_color)
                 ;
-    }
-
-    public static void stylePositiveButton(final MaterialDialog dialog) {
-        final View posBtn = dialog.getActionButton(DialogAction.POSITIVE);
-        posBtn.setBackgroundColor(dialog.getContext().getResources().getColor(R.color.dialog_pos_btn_background_color));
     }
 
     public static Bitmap drawableToBitmap(final int drawableRes) {

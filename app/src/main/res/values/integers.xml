@@ -2,4 +2,5 @@
 <resources>
     <integer name="categories_column_num">2</integer>
     <integer name="items_column_num">3</integer>
+    <integer name="review_items_column_num">2</integer>
 </resources>

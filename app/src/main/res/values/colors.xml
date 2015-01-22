@@ -9,8 +9,8 @@
     <color name="primary_dark">#F4511E</color>
     <color name="accent">#FF9E80</color>
 
-    <color name="dialog_pos_btn_background_color">@color/primary_dark</color>
-    <color name="dialog_pos_btn_text_color">@color/primary_text</color>
 
     <color name="category_name_background">#1fffffff</color>
+    <color name="dialog_pos_btn_text_color">@color/primary</color>
+    <color name="dialog_neg_btn_text_color">#ff3c3c3c</color>
 </resources>

@@ -75,8 +75,6 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
                         }
                     }).build();
-
-            ViewUtil.stylePositiveButton(updateDialog);
             updateDialog.show();
 
         } else if (action == DatabaseAction.INSTALL_NEW_ONE) {

@@ -4,8 +4,8 @@
     <string name="desc_category_thumbnail">لمحة للتصنيف</string>
     <string name="content_new_update">هنالك تحديث جديد , هل تريد التحديث ؟</string>
     <string name="title_new_update">تحديث جديد</string>
-    <string name="pos_btn_update_dialog">نعم</string>
-    <string name="neg_btn_update_dialog">لا</string>
+    <string name="pos_btn_update_dialog">@string/yes</string>
+    <string name="neg_btn_update_dialog">@string/no</string>
     <string name="title_loading_db">إنتظر من فضلك</string>
     <string name="content_loading_db">جاري تحميل البيانات</string>
     <string name="title_action_search">البحث</string>
@@ -13,6 +13,25 @@
     <string name="hint_search_items">أكتب اسم الغرض</string>
     <string name="title_shopping_cart">عربة التسوق</string>
     <string name="btn_review_item_put_note">وضع ملاحظة</string>
-    <string name="btn_review_item_put_amount">تحديد الكمية</string>>
+    <string name="btn_review_item_put_amount">تحديد الكمية</string>
+    <string name="actionbar_title_review_items">مراجعة المشتريات</string>
+    <string name="amount_review_item">الكمية</string>
+    <string name="note_review_item">ملاحظة</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="ok">موافق</string>
+    <string name="cancel">إلغاء</string>
+    <string name="hint_type_amount">الكمية</string>
+    <string name="hint_type_note">الملاحظة</string>
+    <string name="title_type_note">أكتب الملاحظة</string>
+    <string name="title_type_amount">أكتب الكمية</string>
+    <string name="action_done">أنتهيت</string>
+    <string name="desc_review_item_clear">حذف الغرض</string>
+    <string name="btn_share_items_msg">مشاركة</string>
+    <string name="content_clear_item_dialog">هل أنت متاكد من حذف 0 ؟</string>
+    <string name="btn_copy_items_msg">نسخ</string>
+    <string name="title_share_item">مشاركة المشتريات</string>
+    <string name="actionbar_title_share_items">مشاركة المشتريات</string>
+    <string name="hint_items_msg">رسالة المشتريات</string>>
 
 </resources>

@@ -7,4 +7,10 @@ import android.support.v7.app.ActionBarActivity;
  */
 public class BaseActivity extends ActionBarActivity {
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
 }
