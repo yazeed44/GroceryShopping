@@ -1,9 +1,9 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -61,11 +61,11 @@ public class ItemsMsgActivity extends BaseActivity {
         mShareBtn.getTextView().setTextSize(textSize);
         mCopyBtn.getTextView().setTextSize(textSize);
 
-        final Drawable shareDrawable = getResources().getDrawable(R.drawable.ic_share);
+/*        final Drawable shareDrawable = getResources().getDrawable(R.drawable.ic_share);
         mShareBtn.getTextView().setCompoundDrawablesWithIntrinsicBounds(shareDrawable, null, null, null);
 
         final Drawable copyDrawable = getResources().getDrawable(R.drawable.ic_content_copy);
-        mCopyBtn.getTextView().setCompoundDrawablesWithIntrinsicBounds(copyDrawable, null, null, null);
+        mCopyBtn.getTextView().setCompoundDrawablesWithIntrinsicBounds(copyDrawable, null, null, null);*/
     }
 
 
@@ -86,10 +86,19 @@ public class ItemsMsgActivity extends BaseActivity {
     @OnClick(R.id.items_msg_copy_btn)
     public void copy(View view) {
         copyMsgToClipboard();
+        ViewUtil.toastShort(ItemsMsgActivity.this, R.string.toast_copied_msg_sucessfully);
     }
 
 
     private void copyMsgToClipboard() {
-        //TODO implement copy
+        final String msgToCopy = mMsgTxt.getText().toString();
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(msgToCopy);
+        } else {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("msg", msgToCopy);
+            clipboard.setPrimaryClip(clip);
+        }
     }
 }

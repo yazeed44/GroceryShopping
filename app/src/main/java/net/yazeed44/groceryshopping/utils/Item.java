@@ -13,10 +13,12 @@ public final class Item {
     public final List<String> units;
     public final int key;
     private String mAmount;
+    private String mChosenUnit;
 
     public Item(String name, String units, String defaultAmount) {
         this.name = name;
         this.units = generateUnits(units);
+        setChosenUnit(this.units.get(0));
         this.mAmount = defaultAmount;
         key = mCount++;
     }
@@ -35,6 +37,14 @@ public final class Item {
         this.mAmount = amount;
     }
 
+
+    public String getChosenUnit() {
+        return mChosenUnit;
+    }
+
+    public void setChosenUnit(String newUnit) {
+        this.mChosenUnit = newUnit;
+    }
 
     @Override
     public String toString() {

@@ -32,6 +32,7 @@
     <string name="btn_copy_items_msg">نسخ</string>
     <string name="title_share_item">مشاركة المشتريات</string>
     <string name="actionbar_title_share_items">مشاركة المشتريات</string>
-    <string name="hint_items_msg">رسالة المشتريات</string>>
+    <string name="hint_items_msg">رسالة المشتريات</string>
+    <string name="toast_copied_msg_sucessfully">تم النسخ بنجاح</string>>
 
 </resources>

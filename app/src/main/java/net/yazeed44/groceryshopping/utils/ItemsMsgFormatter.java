@@ -27,10 +27,8 @@ public final class ItemsMsgFormatter {
         for (final Item item : mItems) {
             final String nameHtml = item.name;
             final String amountHtml = " : " + item.getAmount();
-            final String combinationHtml = " " + item.combination;
-            final String noteHtml = item.isNoteValid() ? "<br/>" + "ملاحظة" + " : " + item.getNote() + "<br/>" : "<br/>";
-
-            itemsHtml += nameHtml + amountHtml + combinationHtml + noteHtml;
+            final String combinationHtml = " " + item.getChosenUnit();
+            itemsHtml += nameHtml + amountHtml + combinationHtml;
         }
 
         return itemsHtml;

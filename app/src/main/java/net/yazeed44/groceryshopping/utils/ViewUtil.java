@@ -3,6 +3,7 @@ package net.yazeed44.groceryshopping.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -63,6 +64,14 @@ public final class ViewUtil {
         mRegularTypeface = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Regular.ttf");
         return mRegularTypeface;
 
+    }
+
+    public static void toastShort(final Context context, final CharSequence charSequence) {
+        Toast.makeText(context, charSequence, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void toastShort(final Context context, final int txtId) {
+        Toast.makeText(context, txtId, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -51,17 +51,7 @@
                 android:textColor="@color/secondary_text_default_material_light"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/review_item_note"
 
-                style="@style/TextAppearance.AppCompat.Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textColor="@color/secondary_text_default_material_light"
-                android:textSize="14sp"
-
-                />
         </LinearLayout>
 
 
@@ -73,28 +63,20 @@
             android:orientation="horizontal">
 
             <!--There's a weird bug with Button flat , the button won't appear if you set
-                 a resource on it directly !! it have  to be reference , any way in real-time there's no problem
+                 a resource on it directly !! it have  to be reference
+                  , any way in real-time there's no problem
                  -->
 
             <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/review_item_put_amount"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/dialog_neg_btn_text_color"
+                android:background="@color/primary"
                 android:text="@string/btn_review_item_put_amount"
 
 
                 />
 
-            <com.gc.materialdesign.views.ButtonFlat
-                android:id="@+id/review_item_put_note"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/primary"
-                android:text="@string/btn_review_item_put_note"
-
-
-                />
 
         </LinearLayout>
 

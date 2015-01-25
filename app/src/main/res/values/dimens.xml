@@ -17,4 +17,8 @@
     <dimen name="review_item_btns_margin_left">40dp</dimen>
     <dimen name="review_item_btns_text_size">4sp</dimen>
     <dimen name="items_msg_btn_text_size">5sp</dimen>
+
+
+    <item name="type_amount_units_spinner_weight" format="float" type="dimen">0.08</item>
+    <item name="type_amount_amount_txt_weight" format="float" type="dimen">0.92</item>
 </resources>

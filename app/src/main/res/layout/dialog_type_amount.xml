@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+    <Spinner
+        android:id="@+id/type_amount_unit_spinner"
+        style="@style/Widget.AppCompat.Spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="@dimen/type_amount_units_spinner_weight" />
+
+    <EditText
+        android:id="@+id/type_amount_txt"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="@dimen/type_amount_amount_txt_weight"
+        android:hint="@string/hint_type_amount"
+        android:inputType="text"
+
+        />
+
+
+</LinearLayout>

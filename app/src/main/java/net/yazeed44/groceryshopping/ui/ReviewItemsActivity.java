@@ -6,15 +6,17 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -34,7 +36,6 @@ import butterknife.OnClick;
 public class ReviewItemsActivity extends BaseActivity {
 
 
-    private String mNotePrefix;
     private String mAmountPrefix;
 
 
@@ -53,7 +54,6 @@ public class ReviewItemsActivity extends BaseActivity {
 
     private void initPrefixes() {
         mAmountPrefix = getResources().getString(R.string.amount_review_item) + " : ";
-        mNotePrefix = getResources().getString(R.string.note_review_item) + " : ";
     }
 
     private void initRecycler() {
@@ -92,12 +92,9 @@ public class ReviewItemsActivity extends BaseActivity {
     private void openItemsMsgDialog() {
         final Intent msgIntent = new Intent(this, ItemsMsgActivity.class);
         startActivity(msgIntent);
-
-
     }
 
     private static interface ReviewItemListener {
-        void onClickPutNote(final View putNoteBtn);
 
         void onClickPutAmount(final View putAmountBtn);
 
@@ -124,8 +121,7 @@ public class ReviewItemsActivity extends BaseActivity {
 
 
             holder.mTitle.setText(item.name);
-            holder.mAmount.setText(mAmountPrefix + item.getAmount() + " " + item.combination);
-            holder.mNote.setText(mNotePrefix + item.getNote());
+            holder.mAmount.setText(mAmountPrefix + item.getAmount() + " " + item.getChosenUnit());
 
 
         }
@@ -137,18 +133,20 @@ public class ReviewItemsActivity extends BaseActivity {
 
 
         private void showTypeAmountDialog(final Item item) {
-            final EditText amountText = new EditText(ReviewItemsActivity.this);
-            amountText.setHint(R.string.hint_type_amount);
-            amountText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            final View typeAmountView = getLayoutInflater().inflate(R.layout.dialog_type_amount, null);
+            final EditText amountTxt = ButterKnife.findById(typeAmountView, R.id.type_amount_txt);
+            final Spinner unitSpinner = ButterKnife.findById(typeAmountView, R.id.type_amount_unit_spinner);
+            unitSpinner.setAdapter(createUnitAdapter(item));
 
 
-            createAskDialog(amountText)
+            createAskDialog(typeAmountView)
                     .title(item.name)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            item.setAmount(Float.parseFloat(amountText.getText().toString()));
+                            item.setAmount(amountTxt.getText().toString());
+                            item.setChosenUnit(unitSpinner.getSelectedItem().toString());
                             Log.i("edit Amount", item.name + "  has assigned new amount  " + item.getAmount());
                             updateChild(item);
                         }
@@ -156,34 +154,18 @@ public class ReviewItemsActivity extends BaseActivity {
 
         }
 
+        private SpinnerAdapter createUnitAdapter(final Item item) {
 
-        private void showTypeNoteDialog(final Item item) {
-            final EditText noteText = new EditText(ReviewItemsActivity.this);
-            noteText.setHint(R.string.hint_type_note);
-            noteText.setInputType(InputType.TYPE_CLASS_TEXT);
-
-            createAskDialog(noteText)
-                    .title(item.name)
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
-                            item.setNote(noteText.getText().toString());
-                            Log.i("Edit Note", item.name + "  has assigned new note   " + item.getNote());
-                            updateChild(item);
-                        }
-
-
-                    }).show();
-
+            final ArrayAdapter<String> units = new ArrayAdapter<String>(ReviewItemsActivity.this, android.R.layout.simple_spinner_item, item.units);
+            units.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            return units;
         }
 
-        private MaterialDialog.Builder createAskDialog(final EditText editText) {
-            editText.requestFocus();
+        private MaterialDialog.Builder createAskDialog(final View view) {
             return ViewUtil.createDialog(ReviewItemsActivity.this)
                     .positiveText(R.string.ok)
                     .negativeText(R.string.cancel)
-                    .customView(editText, false);
+                    .customView(view, false);
 
 
         }
@@ -197,12 +179,6 @@ public class ReviewItemsActivity extends BaseActivity {
 
         }
 
-
-        @Override
-        public void onClickPutNote(View view) {
-            final Item item = getItemObject(view);
-            showTypeNoteDialog(item);
-        }
 
         @Override
         public void onClickPutAmount(View view) {
@@ -258,10 +234,6 @@ public class ReviewItemsActivity extends BaseActivity {
         TextView mTitle;
         @InjectView(R.id.review_item_amount)
         TextView mAmount;
-        @InjectView(R.id.review_item_note)
-        TextView mNote;
-        @InjectView(R.id.review_item_put_note)
-        ButtonFlat mPutNote;
         @InjectView(R.id.review_item_put_amount)
         ButtonFlat mPutAmount;
         @InjectView(R.id.review_item_clear)
@@ -283,11 +255,9 @@ public class ReviewItemsActivity extends BaseActivity {
             final Typeface flatButtonTypeface = Typeface.create(ViewUtil.getMediumTypeface(), Typeface.BOLD);
 
             mPutAmount.getTextView().setTypeface(flatButtonTypeface);
-            mPutNote.getTextView().setTypeface(flatButtonTypeface);
 
             final float textSize = getResources().getDimensionPixelSize(R.dimen.review_item_btns_text_size);
             mPutAmount.getTextView().setTextSize(textSize);
-            mPutNote.getTextView().setTextSize(textSize);
         }
 
         @OnClick(R.id.review_item_clear)
@@ -300,10 +270,6 @@ public class ReviewItemsActivity extends BaseActivity {
             mListener.onClickPutAmount(view);
         }
 
-        @OnClick(R.id.review_item_put_note)
-        public void putNote(View view) {
-            mListener.onClickPutNote(view);
-        }
 
     }
 
