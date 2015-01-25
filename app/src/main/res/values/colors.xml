@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
+    <!-- App palette -->
+    <color name="primary">#FF5722</color>
+    <color name="primary_dark">#F4511E</color>
+    <color name="accent">#FF9E80</color>
     <color name="primary_text">#FFFFFF</color>
     <color name="secondary_text">#b3ffffff</color>
     <color name="divider_color">#B6B6B6</color>
 
-    <color name="primary">#FF5722</color>
-    <color name="primary_dark">#F4511E</color>
-    <color name="accent">#FF9E80</color>
 
-
-    <color name="category_name_background">#1fffffff</color>
+    <!-- Buttons -->
     <color name="dialog_pos_btn_text_color">@color/primary</color>
     <color name="dialog_neg_btn_text_color">#ff3c3c3c</color>
+    <color name="btn_copy_msg_color">#FAFAFA</color>
+    <color name="btn_share_msg_color">#FF5252</color>
 </resources>

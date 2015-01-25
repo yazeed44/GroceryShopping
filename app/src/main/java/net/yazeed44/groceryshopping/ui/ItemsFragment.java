@@ -130,7 +130,7 @@ public class ItemsFragment extends BaseFragment {
         private boolean isChecked(final Item item) {
 
             boolean isChecked = false;
-            for (final Item arrayItem : MainActivity.sCheckedItems) {
+            for (final Item arrayItem : MainActivity.CHOSEN_ITEMS) {
 
                 if (item.key == arrayItem.key) {
                     isChecked = true;

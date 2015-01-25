@@ -13,9 +13,10 @@ import net.yazeed44.groceryshopping.utils.DBUtil;
 public class ItemsDBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "shoppingItems.db";
-    public static final String COLUMN_ID = "_id";
+
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_COMBINATION = "combination";
+    public static final String COLUMN_UNITS = "units";
+    public static final String COLUMN_DEF_AMOUNT = "def_amount";
     private final Context mContext;
     private SQLiteDatabase db;
 

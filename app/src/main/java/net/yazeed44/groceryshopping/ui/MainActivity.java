@@ -26,8 +26,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
 
     public static final String CATEGORY_INDEX_KEY = "categoryIndexKey";
-    public static final String CHOSEN_ITEM_KEY = "chosenItemsKey";
-    public static ArrayList<Item> sCheckedItems = new ArrayList<>();
+    public static final ArrayList<Item> CHOSEN_ITEMS = new ArrayList<>();
     private CategoriesFragment mCategoriesFragment;
     private SearchView mSearchView;
     private ItemsTabsFragment mItemsFragment;
@@ -175,7 +174,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
     private void openReviewItemsActivity() {
         final Intent intent = new Intent(this, ReviewItemsActivity.class);
-        //  intent.putExtra(CHOSEN_ITEM_KEY,sCheckedItems);
         startActivity(intent);
     }
 
@@ -239,18 +237,18 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
     private void updateShoppingCart() {
 /*
-        if (sCheckedItems.isEmpty()) {
+        if (CHOSEN_ITEMS.isEmpty()) {
             mShoppingCountTextView.setVisibility(View.GONE);
         } else {
             mShoppingCountTextView.setVisibility(View.VISIBLE);
-            mShoppingCountTextView.setText(sCheckedItems.size() + "");
+            mShoppingCountTextView.setText(CHOSEN_ITEMS.size() + "");
         }
 */
     }
 
     @Override
     public void onCheck(Item item) {
-        sCheckedItems.add(item);
+        CHOSEN_ITEMS.add(item);
         Log.d("onCheck", item.name + "  has been checked");
         updateShoppingCart();
 
@@ -258,7 +256,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
     @Override
     public void onUnCheck(Item item) {
-        sCheckedItems.remove(item);
+        CHOSEN_ITEMS.remove(item);
         Log.d("onUnCheck", item.name + "  has been Un checked");
         updateShoppingCart();
 

@@ -39,7 +39,7 @@ public final class DBUtil {
 
     }
 
-    public synchronized static ArrayList<Category> getCategories() {
+    public static ArrayList<Category> getCategories() {
         if (mCategories != null) {
             return mCategories;
         }

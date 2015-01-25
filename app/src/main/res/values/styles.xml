@@ -24,6 +24,9 @@
     </style>
 
     <style name="ItemsMsgBtn" parent="TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_weight">0.5</item>
 
     </style>
 </resources>

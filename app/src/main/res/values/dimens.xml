@@ -16,4 +16,5 @@
     <dimen name="item_height">40dp</dimen>
     <dimen name="review_item_btns_margin_left">40dp</dimen>
     <dimen name="review_item_btns_text_size">4sp</dimen>
+    <dimen name="items_msg_btn_text_size">5sp</dimen>
 </resources>

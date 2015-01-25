@@ -3,13 +3,12 @@ package net.yazeed44.groceryshopping.utils;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by yazeed44 on 12/31/14.
  */
-public final class Category implements Serializable {
+public final class Category {
 
     public final String name;
     public final int thumbnailRes;

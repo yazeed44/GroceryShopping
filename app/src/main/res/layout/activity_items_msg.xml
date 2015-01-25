@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/activity_horizontal_margin"
     android:orientation="vertical">
 
 
@@ -19,26 +20,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <com.gc.materialdesign.views.ButtonRectangle
-            android:id="@+id/items_msg_share_btn"
-            style="@style/ItemsMsgBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#F44336"
-
-
-            android:text="@string/btn_share_items_msg" />
 
         <com.gc.materialdesign.views.ButtonRectangle
             android:id="@+id/items_msg_copy_btn"
             style="@style/ItemsMsgBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FFF"
+            android:background="@color/btn_copy_msg_color"
 
             android:text="@string/btn_copy_items_msg" />
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/items_msg_share_btn"
+
+            style="@style/ItemsMsgBtn"
+            android:background="@color/btn_share_msg_color"
+
+            android:text="@string/btn_share_items_msg"
+
+            />
 
 
     </LinearLayout>

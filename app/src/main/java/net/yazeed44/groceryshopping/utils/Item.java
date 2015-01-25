@@ -1,57 +1,43 @@
 package net.yazeed44.groceryshopping.utils;
 
-import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * Created by yazeed44 on 12/31/14.
  */
-public final class Item implements Serializable {
-
-
-    public static final String DEFAULT_NOTE = "لايوجد";
-    private String note = DEFAULT_NOTE;
-    private static int count = 0;
+public final class Item {
+    private static int mCount = 0;
     public final String name;
-    public final String combination;
+    public final List<String> units;
     public final int key;
-    private float amount = 1;
+    private String mAmount;
 
-    public Item(String name, String combination) {
+    public Item(String name, String units, String defaultAmount) {
         this.name = name;
-        this.combination = combination;
-        key = count++;
+        this.units = generateUnits(units);
+        this.mAmount = defaultAmount;
+        key = mCount++;
     }
+
+    private List<String> generateUnits(String units) {
+        //Units will be something like this   unit1,unit2,unit3 .  so we need to fetch every unit then create an array to store them in
+        return Arrays.asList(units.split("\\s*,\\s*"));
+    }
+
+
+    public String getAmount() {
+        return mAmount;
+    }
+
+    public void setAmount(String amount) {
+        this.mAmount = amount;
+    }
+
 
     @Override
     public String toString() {
         return name;
-    }
-
-
-    public boolean isNoteValid() {
-        return !(getNote().equals(DEFAULT_NOTE));
-    }
-
-    public float getAmount() {
-        return amount;
-    }
-
-    public void setAmount(float amount) {
-        this.amount = amount;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-
-        if (note.isEmpty()) {
-            this.note = DEFAULT_NOTE;
-            return;
-        }
-
-
-        this.note = note;
     }
 }

@@ -24,6 +24,10 @@ import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.utils.Item;
 import net.yazeed44.groceryshopping.utils.ViewUtil;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
 /**
  * Created by yazeed44 on 1/20/15.
  */
@@ -116,7 +120,7 @@ public class ReviewItemsActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(ReviewItemsHolder holder, int position) {
-            final Item item = MainActivity.sCheckedItems.get(position);
+            final Item item = MainActivity.CHOSEN_ITEMS.get(position);
 
 
             holder.mTitle.setText(item.name);
@@ -128,7 +132,7 @@ public class ReviewItemsActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            return MainActivity.sCheckedItems.size();
+            return MainActivity.CHOSEN_ITEMS.size();
         }
 
 
@@ -185,7 +189,7 @@ public class ReviewItemsActivity extends BaseActivity {
         }
 
         private void updateChild(final Item item) {
-            final int position = MainActivity.sCheckedItems.indexOf(item);
+            final int position = MainActivity.CHOSEN_ITEMS.indexOf(item);
 
             notifyItemChanged(position);
             Log.d("updateChild", item.name + " should be updated by now");
@@ -208,8 +212,8 @@ public class ReviewItemsActivity extends BaseActivity {
 
         @Override
         public void onClickClear(View clearView) {
-            final int itemIndex = MainActivity.sCheckedItems.indexOf(getItemObject(clearView));
-            final Item item = MainActivity.sCheckedItems.get(itemIndex);
+            final int itemIndex = MainActivity.CHOSEN_ITEMS.indexOf(getItemObject(clearView));
+            final Item item = MainActivity.CHOSEN_ITEMS.get(itemIndex);
 
 
             ViewUtil.createDialog(ReviewItemsActivity.this)
@@ -221,12 +225,12 @@ public class ReviewItemsActivity extends BaseActivity {
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
                             notifyItemRemoved(itemIndex);
-                            MainActivity.sCheckedItems.remove(item);
+                            MainActivity.CHOSEN_ITEMS.remove(item);
                         }
                     }).show();
 
 
-            Log.d("CheckedItems", MainActivity.sCheckedItems.toString());
+            Log.d("CheckedItems", MainActivity.CHOSEN_ITEMS.toString());
 
         }
 
@@ -245,39 +249,37 @@ public class ReviewItemsActivity extends BaseActivity {
                 parent = (View) parent.getParent();
             }
             final int index = mRecycler.getChildPosition(parent);
-            return MainActivity.sCheckedItems.get(index);
+            return MainActivity.CHOSEN_ITEMS.get(index);
         }
     }
 
-    private class ReviewItemsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView mTitle;
-        private TextView mAmount;
-        private TextView mNote;
-        private ButtonFlat mPutNote;
-        private ButtonFlat mPutAmount;
+    class ReviewItemsHolder extends RecyclerView.ViewHolder {
+        @InjectView(R.id.review_item_title)
+        TextView mTitle;
+        @InjectView(R.id.review_item_amount)
+        TextView mAmount;
+        @InjectView(R.id.review_item_note)
+        TextView mNote;
+        @InjectView(R.id.review_item_put_note)
+        ButtonFlat mPutNote;
+        @InjectView(R.id.review_item_put_amount)
+        ButtonFlat mPutAmount;
+        @InjectView(R.id.review_item_clear)
+        ImageView mClearImage;
+
         private ReviewItemListener mListener;
-        private ImageView mClearImage;
 
         public ReviewItemsHolder(View itemView, final ReviewItemListener listener) {
             super(itemView);
             mListener = listener;
-            mTitle = (TextView) itemView.findViewById(R.id.review_item_title);
-            mAmount = (TextView) itemView.findViewById(R.id.review_item_amount);
-            mNote = (TextView) itemView.findViewById(R.id.review_item_note);
 
-            mPutNote = (ButtonFlat) itemView.findViewById(R.id.review_item_put_note);
-            mPutNote.setOnClickListener(this);
+            ButterKnife.inject(this, itemView);
 
-            mPutAmount = (ButtonFlat) itemView.findViewById(R.id.review_item_put_amount);
-            mPutAmount.setOnClickListener(this);
+            setupButtons();
 
-            setupBtns();
-
-            mClearImage = (ImageView) itemView.findViewById(R.id.review_item_clear);
-            mClearImage.setOnClickListener(this);
         }
 
-        private void setupBtns() {
+        private void setupButtons() {
             final Typeface flatButtonTypeface = Typeface.create(ViewUtil.getMediumTypeface(), Typeface.BOLD);
 
             mPutAmount.getTextView().setTypeface(flatButtonTypeface);
@@ -288,28 +290,20 @@ public class ReviewItemsActivity extends BaseActivity {
             mPutNote.getTextView().setTextSize(textSize);
         }
 
-        @Override
-        public void onClick(View v) {
-
-
-            switch (v.getId()) {
-                case R.id.review_item_put_note:
-                    mListener.onClickPutNote(v);
-                    break;
-
-                case R.id.review_item_put_amount:
-                    mListener.onClickPutAmount(v);
-                    break;
-
-                case R.id.review_item_clear:
-                    mListener.onClickClear(v);
-                    break;
-
-                default:
-                    break;
-            }
+        @OnClick(R.id.review_item_clear)
+        public void clear(View view) {
+            mListener.onClickClear(view);
         }
 
+        @OnClick(R.id.review_item_put_amount)
+        public void putAmount(View view) {
+            mListener.onClickPutAmount(view);
+        }
+
+        @OnClick(R.id.review_item_put_note)
+        public void putNote(View view) {
+            mListener.onClickPutNote(view);
+        }
 
     }
 

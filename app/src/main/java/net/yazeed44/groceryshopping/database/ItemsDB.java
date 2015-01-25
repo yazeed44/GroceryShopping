@@ -80,8 +80,9 @@ public class ItemsDB {
 
     private Item getItem(final Cursor cursor) {
         final String name = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_NAME));
-        final String combination = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_COMBINATION));
+        final String units = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_UNITS));
+        final String defaultAmount = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_DEF_AMOUNT));
 
-        return new Item(name, combination);
+        return new Item(name, units, defaultAmount);
     }
 }
