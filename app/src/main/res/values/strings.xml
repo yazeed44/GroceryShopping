@@ -9,7 +9,6 @@
     <string name="title_loading_db">إنتظر من فضلك</string>
     <string name="content_loading_db">جاري تحميل البيانات</string>
     <string name="title_action_search">البحث</string>
-    <string name="desc_reset_search">Reset search text</string>
     <string name="hint_search_items">أكتب اسم الغرض</string>
     <string name="title_shopping_cart">عربة التسوق</string>
     <string name="btn_review_item_put_note">وضع ملاحظة</string>
@@ -22,7 +21,7 @@
     <string name="ok">موافق</string>
     <string name="cancel">إلغاء</string>
     <string name="hint_type_amount">الكمية</string>
-    <string name="hint_type_note">الملاحظة</string>
+    <string name="hint_type_note">ملاحظة</string>
     <string name="title_type_note">أكتب الملاحظة</string>
     <string name="title_type_amount">أكتب الكمية</string>
     <string name="action_done">أنتهيت</string>
@@ -33,6 +32,11 @@
     <string name="title_share_item">مشاركة المشتريات</string>
     <string name="actionbar_title_share_items">مشاركة المشتريات</string>
     <string name="hint_items_msg">رسالة المشتريات</string>
-    <string name="toast_copied_msg_sucessfully">تم النسخ بنجاح</string>>
+    <string name="toast_copied_msg_sucessfully">تم النسخ بنجاح</string>
+    <string name="desc_share_app_image">التطبيق المشارك إليه</string>
+    <string name="copy_content">نسخ</string>
+    <string name="title_share_apps">شارك عبر : </string>
+    <string name="action_add_note">إضافة ملاحظة</string>
+    <string name="snack_bar_add_note">هل تريد إضافة ملاحظة ؟</string>>
 
 </resources>

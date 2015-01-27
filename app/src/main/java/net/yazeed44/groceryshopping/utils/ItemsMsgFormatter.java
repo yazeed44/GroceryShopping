@@ -25,13 +25,30 @@ public final class ItemsMsgFormatter {
         String itemsHtml = "";
 
         for (final Item item : mItems) {
+            String itemHtml = "";
             final String nameHtml = item.name;
             final String amountHtml = " : " + item.getAmount();
             final String combinationHtml = " " + item.getChosenUnit();
-            itemsHtml += nameHtml + amountHtml + combinationHtml;
+            itemHtml += nameHtml + amountHtml + combinationHtml + "<br/>";
+            itemHtml += generateDividerHtml(itemHtml);
+
+            itemsHtml += itemHtml;
         }
 
         return itemsHtml;
+    }
+
+    private String generateDividerHtml(final String itemHtml) {
+
+        String dividerHtml = "";
+        return dividerHtml;
+
+        /*
+        for (int i = 0 ; i < itemHtml.length() ; i++){
+            dividerHtml += "-";
+        }
+        dividerHtml += "<br/>";
+        return dividerHtml;*/
     }
 
 
