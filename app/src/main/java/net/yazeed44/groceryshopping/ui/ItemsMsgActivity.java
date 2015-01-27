@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ public class ItemsMsgActivity extends BaseActivity {
     @InjectView(R.id.share_apps_recycler)
     RecyclerView mShareAppsRecycler;
 
+    private int mNoteCount = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +68,18 @@ public class ItemsMsgActivity extends BaseActivity {
 
 
         mShareAppsRecycler.setLayoutManager(gridLayoutManager);
+        setupShareAppsAdapter();
+
+    }
+
+    private void setupShareAppsAdapter() {
         mShareAppsRecycler.setAdapter(new ShareAppAdapter(getAppsToShare()));
     }
 
     private void setupMsgText() {
+
+
+        mMsgTxt.setMovementMethod(new ScrollingMovementMethod());
         mMsgTxt.setText(ItemsMsgFormatter.from(MainActivity.CHOSEN_ITEMS).format());
     }
 
@@ -81,12 +91,13 @@ public class ItemsMsgActivity extends BaseActivity {
 
             final ShareApp app = ShareApp.Builder.from(resolveInfo, this)
                     .setText(getShareTxt())
+                    .setSubject(getResources().getString(R.string.subject_items_msg))
                     .build();
 
             apps.add(app);
         }
 
-        //Adding copy content , techincally it isn't an app
+        //Adding copy content , technically it isn't an app
 
         apps.add(createCopyShare());
 
@@ -133,11 +144,11 @@ public class ItemsMsgActivity extends BaseActivity {
     private java.util.List<ResolveInfo> getNativeAppsToShare() {
 
 
-        Intent intent = new Intent(Intent.ACTION_SEND, null);
+        Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, "");
         intent.setType("text/plain");
         PackageManager packageManager = getPackageManager();
-        return packageManager.queryIntentActivities(intent, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
+        return packageManager.queryIntentActivities(intent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
     }
 
     @Override
@@ -162,8 +173,10 @@ public class ItemsMsgActivity extends BaseActivity {
 
     private MaterialDialog createTypeNoteDialog() {
 
+
         final EditText typeNoteTxt = new EditText(this);
-        typeNoteTxt.setHint(R.string.hint_type_note);
+        final String noteString = getResources().getString(R.string.hint_type_note);
+        typeNoteTxt.setHint(noteString);
 
 
         return ViewUtil.createDialog(this)
@@ -175,7 +188,9 @@ public class ItemsMsgActivity extends BaseActivity {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         super.onPositive(dialog);
-                        mMsgTxt.append(getResources().getString(R.string.hint_type_note) + " : " + typeNoteTxt.getText() + Html.fromHtml("<br/>"));
+                        final CharSequence noteTxt = noteString + " " + mNoteCount++ + " : " + typeNoteTxt.getText() + Html.fromHtml("<br/>");
+                        mMsgTxt.append(noteTxt);
+                        setupShareAppsAdapter();
                     }
                 }).build();
     }
@@ -244,7 +259,10 @@ public class ItemsMsgActivity extends BaseActivity {
 
             ButterKnife.inject(this, itemView);
 
-            itemView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.share_app_column_height)));
+            final int height = getResources().getDimensionPixelSize(R.dimen.share_app_column_height);
+            final int width = getResources().getDimensionPixelSize(R.dimen.share_app_column_width);
+
+            itemView.setLayoutParams(new AbsListView.LayoutParams(width, height));
         }
 
         @OnClick(R.id.share_app_layout)

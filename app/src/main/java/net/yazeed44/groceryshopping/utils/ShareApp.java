@@ -42,22 +42,22 @@ public class ShareApp {
         private Drawable icon;
         private String type = "text/plain";
         private String action = Intent.ACTION_SEND;
+        private String extraType = Intent.EXTRA_TEXT;
         private AppClickListener listener = new AppClickListener() {
             @Override
             public void onClickApp(Context context, ActivityInfo activityInfo, CharSequence text) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(action);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-
+                Intent sendIntent = new Intent(action);
+                sendIntent.putExtra(extraType, text.toString());
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
+                sendIntent.setType(type);
                 sendIntent.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
 
-                sendIntent.setType(type);
-//        startActivity(Intent.createChooser(sendIntent, "Share"));
-                context.startActivity(sendIntent);
+
+                context.startActivity(Intent.createChooser(sendIntent, ""));
             }
         };
-        private String extraType = Intent.EXTRA_TEXT;
         private CharSequence text;
+        private CharSequence subject = "";
 
 
         public Builder(final CharSequence label) {
@@ -108,6 +108,11 @@ public class ShareApp {
 
         public Builder setText(final CharSequence text) {
             this.text = text;
+            return this;
+        }
+
+        public Builder setSubject(final CharSequence subject) {
+            this.subject = subject;
             return this;
         }
 

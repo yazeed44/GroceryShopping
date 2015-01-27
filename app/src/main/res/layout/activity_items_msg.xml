@@ -11,14 +11,17 @@
 
         android:layout_height="wrap_content">
 
-        <TextView
-        android:id="@+id/items_msg_txt"
 
-            style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="@string/hint_items_msg" />
+        <TextView
+            android:id="@+id/items_msg_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|center"
+            android:hint="@string/hint_items_msg"
+            android:maxLines="@integer/items_msg_max_lines"
+            android:padding="16dp"
+            android:scrollbars="vertical"
+            android:textSize="14sp" />
 
     </android.support.v7.widget.CardView>
 
@@ -38,12 +41,13 @@
             >
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Title"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/title_share_apps" />
+                android:text="@string/title_share_apps"
+                android:textSize="24sp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/share_apps_recycler"

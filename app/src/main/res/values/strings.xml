@@ -37,6 +37,7 @@
     <string name="copy_content">نسخ</string>
     <string name="title_share_apps">شارك عبر : </string>
     <string name="action_add_note">إضافة ملاحظة</string>
-    <string name="snack_bar_add_note">هل تريد إضافة ملاحظة ؟</string>>
+    <string name="snack_bar_add_note">هل تريد إضافة ملاحظة ؟</string>
+    <string name="subject_items_msg">المشتريات</string>>
 
 </resources>
