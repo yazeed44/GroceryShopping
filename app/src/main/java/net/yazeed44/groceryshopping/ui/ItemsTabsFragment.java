@@ -58,7 +58,7 @@ public class ItemsTabsFragment extends BaseFragment {
 
         mItemsPager.setCurrentItem(0, true);
         final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
 
@@ -66,7 +66,7 @@ public class ItemsTabsFragment extends BaseFragment {
                 mItemsTabs.notifyDataSetChanged();
                 mHasOpenChosenCategory = true;
             }
-        }, 100);
+        });
 
     }
 

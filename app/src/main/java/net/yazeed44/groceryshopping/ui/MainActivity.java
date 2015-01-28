@@ -2,7 +2,6 @@ package net.yazeed44.groceryshopping.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -21,14 +20,18 @@ import net.yazeed44.groceryshopping.utils.ViewUtil;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
-public class MainActivity extends BaseActivity implements CategoriesFragment.onClickCategoryListener, ItemsFragment.OnCheckItemListener {
+
+public class MainActivity extends BaseActivity implements CategoriesFragment.OnClickCategoryListener, ItemsFragment.OnCheckItemListener {
 
 
     public static final String CATEGORY_INDEX_KEY = "categoryIndexKey";
     public static final ArrayList<Item> CHOSEN_ITEMS = new ArrayList<>();
+    @InjectView(R.id.items_search_view)
+    SearchView mItemsSearchView;
     private CategoriesFragment mCategoriesFragment;
-    private SearchView mSearchView;
     private ItemsTabsFragment mItemsFragment;
     private SearchItemsFragment mSearchItemsFragment;
     private View mShoppingCartView;
@@ -42,7 +45,11 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
         getSupportActionBar().setTitle(null);
 
+        ButterKnife.inject(this);
+
         showCategories(savedInstanceState);
+
+        setupItemsSearch();
 
     }
 
@@ -64,7 +71,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
             if (mCategoriesFragment == null) {
                 mCategoriesFragment = new CategoriesFragment();
-                mCategoriesFragment.setListener(this);
+                mCategoriesFragment.setCategoryListener(this);
             }
 
             getSupportFragmentManager().beginTransaction()
@@ -72,50 +79,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
                     .commit();
 
         }
-    }
-
-
-    private void setupSearchView() {
-        mSearchView.setQueryHint(getResources().getString(R.string.hint_search_items));
-        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSearchFragment();
-
-            }
-        });
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            private void query(final String query) {
-                Log.d("setupSearchView", "Query   " + query);
-                mSearchItemsFragment.query(query);
-
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                query(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                query(s);
-                return true;
-            }
-        });
-
-
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-
-                getSupportFragmentManager().popBackStack();
-
-                mSearchView.clearFocus();
-                return false;
-            }
-        });
     }
 
     private void showSearchFragment() {
@@ -131,20 +94,58 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
                 .commit();
     }
 
+    private void setupItemsSearch() {
+
+
+        mItemsSearchView.setQueryHint(getResources().getString(R.string.hint_search_items));
+
+
+        mItemsSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSearchFragment();
+            }
+        });
+
+        mItemsSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            private void query(final String query) {
+
+                mSearchItemsFragment.query(query);
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                query(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                query(s);
+                return false;
+            }
+        });
+
+
+        mItemsSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mItemsSearchView.clearFocus();
+                getSupportFragmentManager().popBackStack();
+                return false;
+            }
+        });
+
+
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.menu_search, menu);
         getMenuInflater().inflate(R.menu.menu_shopping_cart, menu);
-
-
-        mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        setupSearchView();
-
-        //      mShoppingCartView = MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
-//        mShoppingCountTextView = (TextView) mShoppingCartView.findViewById(R.id.action_shopping_cart_count);
-
         updateShoppingCart();
 
         return true;
@@ -182,6 +183,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         //TODO add animation
 
         showItems(category);
+        hideSearchView();
     }
 
 
@@ -190,7 +192,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
         if (mItemsFragment == null) {
             mItemsFragment = new ItemsTabsFragment();
             mItemsFragment.setCheckListener(this);
-            Log.d("showItems", "Items Fragment has been initalized");
+            Log.d("showItems", "Items Fragment has been initialized");
         }
 
 
@@ -204,6 +206,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
                 .replace(R.id.main_container, mItemsFragment)
                 .addToBackStack(null)
                 .commit();
+
+
     }
 
     @Override
@@ -214,27 +218,18 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
             getSupportFragmentManager().popBackStack();
             getSupportActionBar().setTitle(null);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            showSearchView();
 
         } else if (mSearchItemsFragment != null && mSearchItemsFragment.isVisible()) {
 
+            mItemsSearchView.onActionViewCollapsed();
             getSupportFragmentManager().popBackStack();
-            mSearchView.onActionViewCollapsed();
-
-
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         } else {
             super.onBackPressed();
         }
     }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-
     private void updateShoppingCart() {
 /*
         if (CHOSEN_ITEMS.isEmpty()) {
@@ -244,6 +239,14 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
             mShoppingCountTextView.setText(CHOSEN_ITEMS.size() + "");
         }
 */
+    }
+
+    private void showSearchView() {
+        ((View) mItemsSearchView.getParent()).setVisibility(View.VISIBLE);
+    }
+
+    private void hideSearchView() {
+        ((View) mItemsSearchView.getParent()).setVisibility(View.GONE);
     }
 
     @Override
@@ -262,4 +265,5 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.onC
 
 
     }
+
 }

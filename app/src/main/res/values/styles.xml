@@ -31,6 +31,7 @@
     </style>
 
     <style name="MyCardViewStyle" parent="CardView.Light">
+        <item name="cardUseCompatPadding">true</item>
 
 
     </style>

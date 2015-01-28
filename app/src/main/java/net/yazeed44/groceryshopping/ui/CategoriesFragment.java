@@ -25,6 +25,9 @@ import net.yazeed44.groceryshopping.utils.ViewUtil;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 
 /**
  * Created by yazeed44 on 12/31/14.
@@ -32,18 +35,18 @@ import java.util.ArrayList;
 public class CategoriesFragment extends BaseFragment {
 
 
-    private GridView mCategoriesList;
-    private onClickCategoryListener mListener;
+    @InjectView(R.id.categories_list)
+    GridView mCategoriesList;
+    private OnClickCategoryListener mCategoryListener;
     private ArrayList<Category> mCategories = DBUtil.getCategories();
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mCategoriesList = (GridView) inflater.inflate(R.layout.fragment_categories, container, false);
+        final View layout = inflater.inflate(R.layout.fragment_categories, container, false);
+        ButterKnife.inject(this, layout);
         setupAdapter();
 
-
-        return mCategoriesList;
+        return layout;
     }
 
     @Override
@@ -57,13 +60,14 @@ public class CategoriesFragment extends BaseFragment {
 
     }
 
-    public void setListener(onClickCategoryListener listener) {
-        mListener = listener;
+
+    public void setCategoryListener(OnClickCategoryListener listener) {
+        mCategoryListener = listener;
     }
 
 
-    public static interface onClickCategoryListener {
-        public void onClickCategory(final Category category);
+    public static interface OnClickCategoryListener {
+        void onClickCategory(final Category category);
     }
 
 
@@ -156,7 +160,7 @@ public class CategoriesFragment extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            mListener.onClickCategory(mCategories.get(position));
+            mCategoryListener.onClickCategory(mCategories.get(position));
         }
 
 
