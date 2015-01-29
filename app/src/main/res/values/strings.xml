@@ -38,6 +38,7 @@
     <string name="title_share_apps">شارك عبر : </string>
     <string name="action_add_note">إضافة ملاحظة</string>
     <string name="snack_bar_add_note">هل تريد إضافة ملاحظة ؟</string>
-    <string name="subject_items_msg">المشتريات</string>>
+    <string name="subject_items_msg">المشتريات</string>
+    <string name="desc_item_add_image">إضافة الغرض للسلة</string>>
 
 </resources>

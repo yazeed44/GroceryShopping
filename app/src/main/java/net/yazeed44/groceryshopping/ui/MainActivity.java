@@ -2,12 +2,12 @@ package net.yazeed44.groceryshopping.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -34,8 +34,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     private CategoriesFragment mCategoriesFragment;
     private ItemsTabsFragment mItemsFragment;
     private SearchItemsFragment mSearchItemsFragment;
-    private View mShoppingCartView;
-    private TextView mShoppingCountTextView;
+    private ShoppingCartActionView mShoppingCartView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
         mItemsSearchView.setQueryHint(getResources().getString(R.string.hint_search_items));
 
-
         mItemsSearchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,10 +106,12 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             }
         });
 
+
         mItemsSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             private void query(final String query) {
 
+                if (mSearchItemsFragment != null)
                 mSearchItemsFragment.query(query);
             }
 
@@ -137,6 +138,13 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             }
         });
 
+        mItemsSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemsSearchView.onActionViewExpanded();
+            }
+        });
+
 
     }
 
@@ -146,8 +154,10 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.menu_shopping_cart, menu);
-        updateShoppingCart();
 
+
+        mShoppingCartView = (ShoppingCartActionView) MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
+        updateShoppingCart();
         return true;
     }
 
@@ -231,14 +241,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         }
     }
     private void updateShoppingCart() {
-/*
-        if (CHOSEN_ITEMS.isEmpty()) {
-            mShoppingCountTextView.setVisibility(View.GONE);
-        } else {
-            mShoppingCountTextView.setVisibility(View.VISIBLE);
-            mShoppingCountTextView.setText(CHOSEN_ITEMS.size() + "");
-        }
-*/
+        if (mShoppingCartView != null)
+            mShoppingCartView.updateCounter(CHOSEN_ITEMS.size());
     }
 
     private void showSearchView() {
@@ -250,17 +254,17 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     }
 
     @Override
-    public void onCheck(Item item) {
+    public void onAddItem(Item item) {
         CHOSEN_ITEMS.add(item);
-        Log.d("onCheck", item.name + "  has been checked");
+        Log.d("onAddItem", item.name + "  has been checked");
         updateShoppingCart();
 
     }
 
     @Override
-    public void onUnCheck(Item item) {
+    public void onRemoveItem(Item item) {
         CHOSEN_ITEMS.remove(item);
-        Log.d("onUnCheck", item.name + "  has been Un checked");
+        Log.d("onRemoveItem", item.name + "  has been Un checked");
         updateShoppingCart();
 
 

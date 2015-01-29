@@ -122,7 +122,7 @@ public class CategoriesFragment extends BaseFragment {
             holder.title.setTypeface(ViewUtil.getRegularDefaultTypeface());
             holder.title.setText(category.name);
 
-            final Bitmap photo = category.getBitmap();
+            final Bitmap photo = category.getCover();
 
             if (photo != null) {
                 final String id = holder.title.getText().toString();

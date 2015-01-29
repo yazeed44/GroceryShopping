@@ -23,13 +23,12 @@
 
         <TextView
             android:id="@+id/category_bottom_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:padding="8dp"
+            android:gravity="center"
 
             android:text="الخضراوات"
-            android:textColor="#aaa"
             android:textSize="16sp"
 
             />

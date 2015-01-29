@@ -1,5 +1,7 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +9,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.easyandroidanimations.library.Animation;
+import com.easyandroidanimations.library.AnimationListener;
+import com.easyandroidanimations.library.FlipVerticalAnimation;
 
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.utils.Category;
@@ -18,6 +25,9 @@ import net.yazeed44.groceryshopping.utils.ViewUtil;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by yazeed44 on 1/1/15.
  */
@@ -26,7 +36,6 @@ public class ItemsFragment extends BaseFragment {
     protected ArrayList<Item> mItemsArray;
     protected ItemsAdapter mAdapter;
     private GridView mItemsGridView;
-    private Category mCategory;
     private OnCheckItemListener mListener;
 
     @Override
@@ -46,8 +55,8 @@ public class ItemsFragment extends BaseFragment {
 
     protected ArrayList<Item> getItems() {
         final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
-        mCategory = DBUtil.getCategories().get(categoryIndex);
-        return mCategory.getItems();
+        final Category category = DBUtil.getCategories().get(categoryIndex);
+        return category.getItems();
     }
 
     protected ItemsAdapter createAdapter() {
@@ -60,12 +69,16 @@ public class ItemsFragment extends BaseFragment {
     }
 
     public static interface OnCheckItemListener {
-        void onCheck(final Item item);
+        void onAddItem(final Item item);
 
-        void onUnCheck(final Item item);
+        void onRemoveItem(final Item item);
     }
 
     protected class ItemsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+
+        private final Drawable mAddDrawable = getResources().getDrawable(R.drawable.ic_action_add_shopping_cart);
+
+        private final Drawable mAddedDrawable = getResources().getDrawable(R.drawable.ic_done);
 
         protected ItemsAdapter() {
             mItemsGridView.setOnItemClickListener(this);
@@ -95,7 +108,7 @@ public class ItemsFragment extends BaseFragment {
 
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.element_item, parent, false);
-                holder = createHolder(convertView);
+                holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -116,58 +129,102 @@ public class ItemsFragment extends BaseFragment {
         private void loadItem(final ViewHolder holder, final Item item) {
 
 
-            if (isChecked(item)) {
-                holder.mItemCheckBox.setChecked(true);
+            if (isAdded(item)) {
+                loadAddedItem(holder);
 
             } else {
-                holder.mItemCheckBox.setChecked(false);
+                loadAvailableItem(holder);
             }
 
-            holder.mItemCheckBox.setTypeface(ViewUtil.getRegularDefaultTypeface());
-            holder.mItemCheckBox.setText(item.name);
+            holder.nameTxt.setTypeface(ViewUtil.getRegularDefaultTypeface());
+            holder.nameTxt.setText(item.name);
         }
 
-        private boolean isChecked(final Item item) {
 
-            boolean isChecked = false;
+        private boolean isAdded(final Item item) {
+
+            boolean isAdded = false;
             for (final Item arrayItem : MainActivity.CHOSEN_ITEMS) {
 
                 if (item.key == arrayItem.key) {
-                    isChecked = true;
+                    isAdded = true;
                 }
             }
 
 
-            return isChecked;
+            return isAdded;
         }
 
-        private ViewHolder createHolder(final View convertView) {
-            final ViewHolder holder = new ViewHolder();
-            holder.mItemCheckBox = (CheckBox) convertView.findViewById(R.id.item_checkbox);
-            return holder;
+        private void loadAddedItem(final ViewHolder holder) {
+            holder.addImageView.setImageDrawable(mAddedDrawable);
+            holder.addImageView.setColorFilter(getResources().getColor(R.color.accent));
         }
+
+        private void loadAvailableItem(final ViewHolder holder) {
+            holder.addImageView.setImageDrawable(mAddDrawable);
+            holder.addImageView.setColorFilter(Color.TRANSPARENT);
+        }
+
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final ViewHolder holder = createHolder(view);
+            final ViewHolder holder = new ViewHolder(view);
             final Item item = mItemsArray.get(position);
+            final long duration = 150;
 
-            if (holder.mItemCheckBox.isChecked()) {
-                //Un check
-                mListener.onUnCheck(item);
-                holder.mItemCheckBox.setChecked(false);
+            //TODO Add animation
+            if (isAdded(item)) {
+                //removing
+                mListener.onRemoveItem(item);
+                animateRemoving(holder, duration);
             } else {
-                //check
-                mListener.onCheck(item);
-                holder.mItemCheckBox.setChecked(true);
+                //adding
+                mListener.onAddItem(item);
+                animateAdding(holder, duration);
             }
 
 
         }
 
 
-        private class ViewHolder {
-            private CheckBox mItemCheckBox;
+        private void animateAdding(final ViewHolder holder, final long duration) {
+            new FlipVerticalAnimation(holder.addImageView)
+                    .setDuration(duration)
+                    .setListener(new AnimationListener() {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            loadAddedItem(holder);
+
+
+                        }
+                    })
+                    .animate();
+        }
+
+
+        private void animateRemoving(final ViewHolder holder, final long duration) {
+            new FlipVerticalAnimation(holder.addImageView)
+                    .setDuration(duration)
+                    .setListener(new AnimationListener() {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            loadAvailableItem(holder);
+                        }
+                    })
+                    .animate();
+        }
+
+
+        class ViewHolder {
+            @InjectView(R.id.item_add_image)
+            ImageView addImageView;
+            @InjectView(R.id.item_name)
+            TextView nameTxt;
+
+            public ViewHolder(final View layout) {
+
+                ButterKnife.inject(this, layout);
+            }
         }
     }
 }

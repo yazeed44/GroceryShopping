@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/item_checkbox"
-    style="@style/TextAppearance.AppCompat.Body1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="false"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:gravity="end|center"
-    android:text="تجربة"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
 
-    />
+    android:orientation="horizontal"
+
+    >
+
+    <ImageButton
+        android:id="@+id/item_add_image"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/desc_item_add_image"
+        android:src="@drawable/ic_action_add_shopping_cart" />
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="end|center"
+        android:singleLine="true"
+        android:text="@string/hint_search_items"
+        android:textSize="13sp"
+
+        />
+
+
+</LinearLayout>
+
+
+
+
 

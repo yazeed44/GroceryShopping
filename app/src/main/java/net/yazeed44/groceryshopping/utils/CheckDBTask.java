@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,7 +37,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
     public static final int DOWNLOAD_BUFFER_SIZE = 16000;
     public static final String DOWNLOAD_FAILED = "DownloadFailed";
     public static final String TAG = "checkDBThread";
-    public static final String DB_URL = "https://www.dropbox.com/s/raochv63zzzvhu0/shoppingitems.db?dl=1";
+    public static final String DB_DOWNLOAD_URL = "https://www.dropbox.com/s/raochv63zzzvhu0/shoppingitems.db?dl=1";
     public static final String DB_DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ItemsDBHelper.DB_NAME;
     private static String mLocalDBPath;
     private WeakReference<Activity> mWeakReferenceActivity;
@@ -44,6 +45,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
     public CheckDBTask(final Activity activity) {
 
         mWeakReferenceActivity = new WeakReference<>(activity);
+        mLocalDBPath = DBUtil.getLocalDBPath(mWeakReferenceActivity.get());
     }
 
     @Override
@@ -86,8 +88,6 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
     @Override
     protected Void doInBackground(Void... params) {
 
-        mLocalDBPath = DBUtil.getLocalDBPath(mWeakReferenceActivity.get());
-
         if (DBUtil.localDBExists(mWeakReferenceActivity.get())) {
 
             if (isNetworkAvailable() && newUpdateExists()) {
@@ -110,7 +110,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
     private boolean isPathValid(final String path) {
 
-        if (path == null || DOWNLOAD_FAILED.equals(path)) {
+        if (path == null || DOWNLOAD_FAILED.equals(path) || TextUtils.isEmpty(path)) {
             Log.e(TAG, "There's problem with the downloaded db   " + path);
             return false;
         }
@@ -129,15 +129,15 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
         if (!isPathValid(newDatabasePath)) {
             //TODO Error handle
+            deleteDownloadedDB();
             throw new IllegalStateException("The database haven't downloaded successfully !!");
         }
 
         deleteLocalDB();
-        // ItemsDB.initInstance(ItemsDBHelper.createInstance(mWeakReferenceActivity));
-        final ItemsDBHelper helper = DBUtil.createEmptyDB();
+        final ItemsDBHelper dbHelper = DBUtil.createEmptyDB();
 
         copyNewDB(newDatabasePath);
-        helper.close();
+        dbHelper.close();
         ItemsDB.initInstance(ItemsDBHelper.createInstance(mWeakReferenceActivity.get()));
         deleteDownloadedDB();
         Log.i("replaceLocalDB", "Set the new DB Successfully");
@@ -182,7 +182,6 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
         boolean newUpdateExists;
         if (!isPathValid(newDatabasePath)) {
-            //TODO error handle
             return false;
         }
 
@@ -220,12 +219,12 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
             }
         }
 
-        String dbPath = DOWNLOAD_FAILED;
+        String dbPath;
 
 
         try {
             // Log.d(TAG, "downloading database");
-            final URL url = new URL(DB_URL);
+            final URL url = new URL(DB_DOWNLOAD_URL);
                         /* Open a connection to that URL. */
             URLConnection urlConnection = url.openConnection();
             urlConnection.setUseCaches(false);

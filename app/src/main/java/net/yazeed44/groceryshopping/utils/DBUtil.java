@@ -13,6 +13,7 @@ import net.yazeed44.groceryshopping.database.ItemsDBHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -120,6 +121,13 @@ public final class DBUtil {
         for (final Category category : getCategories()) {
             mItems.addAll(category.getItems());
         }
+
+        Collections.sort(mItems, new Comparator<Item>() {
+            @Override
+            public int compare(Item lhs, Item rhs) {
+                return lhs.name.compareTo(rhs.name);
+            }
+        });
 
         return mItems;
     }

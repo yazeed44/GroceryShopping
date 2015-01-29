@@ -76,7 +76,7 @@ public class SearchItemsFragment extends ItemsFragment {
 
                     for (final Item item : mItems) {
                         if (item.name.startsWith(constraint.toString())) {
-                            Log.d(TAG, "Got  " + item.name);
+                            Log.d(TAG, "Got query result  " + item.name);
                             filteredItems.add(item);
                         }
                     }
@@ -91,6 +91,7 @@ public class SearchItemsFragment extends ItemsFragment {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
+
 
                 if (results.count == 0) {
 
