@@ -96,7 +96,7 @@ public class SearchItemsFragment extends ItemsFragment {
                 if (results.count == 0) {
 
                     mItemsArray = (ArrayList<Item>) results.values;
-                    notifyDataSetInvalidated();
+                    notifyDataSetChanged();
                     Log.d(TAG, "Result updated to  " + mItemsArray.toString());
                 } else {
 

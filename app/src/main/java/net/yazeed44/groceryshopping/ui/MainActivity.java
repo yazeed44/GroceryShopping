@@ -8,7 +8,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.easyandroidanimations.library.Animation;
+import com.easyandroidanimations.library.AnimationListener;
+import com.easyandroidanimations.library.BlinkAnimation;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -34,7 +39,10 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     private CategoriesFragment mCategoriesFragment;
     private ItemsTabsFragment mItemsFragment;
     private SearchItemsFragment mSearchItemsFragment;
-    private ShoppingCartActionView mShoppingCartView;
+
+
+    private ImageView mShoppingCartImageView;
+    private TextView mShoppingCartCounterView;
 
 
     @Override
@@ -50,6 +58,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         showCategories(savedInstanceState);
 
         setupItemsSearch();
+
 
     }
 
@@ -155,10 +164,24 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
         getMenuInflater().inflate(R.menu.menu_shopping_cart, menu);
 
+        final View shoppingCartLayout = MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
 
-        mShoppingCartView = (ShoppingCartActionView) MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
+        mShoppingCartImageView = (ImageView) shoppingCartLayout.findViewById(R.id.action_shopping_cart_image);
+        mShoppingCartCounterView = (TextView) shoppingCartLayout.findViewById(R.id.action_shopping_cart_counter);
+        setupShoppingCart();
         updateShoppingCart();
         return true;
+    }
+
+    private void setupShoppingCart() {
+
+        mShoppingCartImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openReviewItemsActivity();
+            }
+        });
+
     }
 
 
@@ -170,10 +193,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
         switch (item.getItemId()) {
 
-
-            case R.id.action_shopping_cart:
-                openReviewItemsActivity();
-
             default:
                 break;
         }
@@ -184,7 +203,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
 
     private void openReviewItemsActivity() {
-        final Intent intent = new Intent(this, ReviewItemsActivity.class);
+        final Intent intent = new Intent(this, CartActivity.class);
         startActivity(intent);
     }
 
@@ -241,8 +260,18 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         }
     }
     private void updateShoppingCart() {
-        if (mShoppingCartView != null)
-            mShoppingCartView.updateCounter(CHOSEN_ITEMS.size());
+
+        new BlinkAnimation(mShoppingCartImageView)
+                .setListener(new AnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mShoppingCartCounterView.setText(CHOSEN_ITEMS.size() + "");
+                    }
+                })
+                .animate();
+
+
+
     }
 
     private void showSearchView() {

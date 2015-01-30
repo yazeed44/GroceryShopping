@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.ReviewItemsActivity" />
+        <activity android:name=".ui.CartActivity" />
         <activity android:name=".ui.ItemsMsgActivity" />
     </application>
 

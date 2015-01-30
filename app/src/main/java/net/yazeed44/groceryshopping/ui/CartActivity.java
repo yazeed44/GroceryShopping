@@ -33,7 +33,7 @@ import butterknife.OnClick;
 /**
  * Created by yazeed44 on 1/20/15.
  */
-public class ReviewItemsActivity extends BaseActivity {
+public class CartActivity extends BaseActivity {
 
 
     private String mAmountPrefix;
@@ -156,13 +156,13 @@ public class ReviewItemsActivity extends BaseActivity {
 
         private SpinnerAdapter createUnitAdapter(final Item item) {
 
-            final ArrayAdapter<String> units = new ArrayAdapter<String>(ReviewItemsActivity.this, android.R.layout.simple_spinner_item, item.units);
+            final ArrayAdapter<String> units = new ArrayAdapter<String>(CartActivity.this, android.R.layout.simple_spinner_item, item.units);
             units.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             return units;
         }
 
         private MaterialDialog.Builder createAskDialog(final View view) {
-            return ViewUtil.createDialog(ReviewItemsActivity.this)
+            return ViewUtil.createDialog(CartActivity.this)
                     .positiveText(R.string.ok)
                     .negativeText(R.string.cancel)
                     .customView(view, false);
@@ -192,7 +192,7 @@ public class ReviewItemsActivity extends BaseActivity {
             final Item item = MainActivity.CHOSEN_ITEMS.get(itemIndex);
 
 
-            ViewUtil.createDialog(ReviewItemsActivity.this)
+            ViewUtil.createDialog(CartActivity.this)
                     .content(getClearContent(item))
                     .positiveText(R.string.yes)
                     .negativeText(R.string.no)
@@ -219,13 +219,7 @@ public class ReviewItemsActivity extends BaseActivity {
 
         private Item getItemObject(final View view) {
 
-
-            View parent = (View) view.getParent();
-            while (parent.getId() != R.id.review_item_card) {
-                parent = (View) parent.getParent();
-            }
-            final int index = mRecycler.getChildPosition(parent);
-            return MainActivity.CHOSEN_ITEMS.get(index);
+            return MainActivity.CHOSEN_ITEMS.get(ViewUtil.getPositionOfChild(view, R.id.review_item_card, mRecycler));
         }
     }
 

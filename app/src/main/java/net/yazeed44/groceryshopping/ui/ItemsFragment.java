@@ -3,13 +3,12 @@ package net.yazeed44.groceryshopping.ui;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by yazeed44 on 1/1/15.
@@ -35,22 +35,33 @@ public class ItemsFragment extends BaseFragment {
 
     protected ArrayList<Item> mItemsArray;
     protected ItemsAdapter mAdapter;
-    private GridView mItemsGridView;
+    private RecyclerView mItemsRecyclerView;
     private OnCheckItemListener mListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        initGridView(inflater, container);
+        init(inflater, container);
+        setupRecycler();
 
-        return mItemsGridView;
+        return mItemsRecyclerView;
     }
 
-    private void initGridView(final LayoutInflater inflater, final ViewGroup container) {
+    private void init(final LayoutInflater inflater, final ViewGroup container) {
 
-        mItemsGridView = (GridView) inflater.inflate(R.layout.fragment_items, container, false);
+        mItemsRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_items, container, false);
         mItemsArray = getItems();
         mAdapter = createAdapter();
-        mItemsGridView.setAdapter(mAdapter);
+
+    }
+
+    private void setupRecycler() {
+
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.items_column_num));
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mItemsRecyclerView.setHasFixedSize(true);
+        mItemsRecyclerView.setLayoutManager(gridLayoutManager);
+        mItemsRecyclerView.setAdapter(mAdapter);
     }
 
     protected ArrayList<Item> getItems() {
@@ -74,59 +85,36 @@ public class ItemsFragment extends BaseFragment {
         void onRemoveItem(final Item item);
     }
 
-    protected class ItemsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+    private interface ItemListener {
+        void onClickItem(View itemLayout);
+    }
+
+    protected class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> implements ItemListener {
 
         private final Drawable mAddDrawable = getResources().getDrawable(R.drawable.ic_action_add_shopping_cart);
 
-        private final Drawable mAddedDrawable = getResources().getDrawable(R.drawable.ic_done);
+        private final Drawable mAddedDrawable = getResources().getDrawable(R.drawable.ic_added_shopping_cart);
 
-        protected ItemsAdapter() {
-            mItemsGridView.setOnItemClickListener(this);
+        @Override
+        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_item, parent, false);
+            return new ItemViewHolder(layout, this);
         }
 
         @Override
-        public int getCount() {
-            return mItemsArray.size();
+        public void onBindViewHolder(ItemViewHolder holder, int position) {
 
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mItemsArray.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return mItemsArray.get(position).key;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
             final Item item = mItemsArray.get(position);
 
-            final ViewHolder holder;
-
-            if (convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(R.layout.element_item, parent, false);
-                holder = new ViewHolder(convertView);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-
             loadItem(holder, item);
-            setHeight(convertView);
-
-            return convertView;
         }
 
-        private void setHeight(View convertView) {
-            final int height = getResources().getDimensionPixelSize(R.dimen.item_height);
-            convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+        @Override
+        public int getItemCount() {
+            return mItemsArray.size();
         }
 
-        private void loadItem(final ViewHolder holder, final Item item) {
+        private void loadItem(final ItemViewHolder holder, final Item item) {
 
 
             if (isAdded(item)) {
@@ -155,39 +143,17 @@ public class ItemsFragment extends BaseFragment {
             return isAdded;
         }
 
-        private void loadAddedItem(final ViewHolder holder) {
+        private void loadAddedItem(final ItemViewHolder holder) {
             holder.addImageView.setImageDrawable(mAddedDrawable);
             holder.addImageView.setColorFilter(getResources().getColor(R.color.accent));
         }
 
-        private void loadAvailableItem(final ViewHolder holder) {
+        private void loadAvailableItem(final ItemViewHolder holder) {
             holder.addImageView.setImageDrawable(mAddDrawable);
             holder.addImageView.setColorFilter(Color.TRANSPARENT);
         }
 
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final ViewHolder holder = new ViewHolder(view);
-            final Item item = mItemsArray.get(position);
-            final long duration = 150;
-
-            //TODO Add animation
-            if (isAdded(item)) {
-                //removing
-                mListener.onRemoveItem(item);
-                animateRemoving(holder, duration);
-            } else {
-                //adding
-                mListener.onAddItem(item);
-                animateAdding(holder, duration);
-            }
-
-
-        }
-
-
-        private void animateAdding(final ViewHolder holder, final long duration) {
+        private void animateAdding(final ItemViewHolder holder, final long duration) {
             new FlipVerticalAnimation(holder.addImageView)
                     .setDuration(duration)
                     .setListener(new AnimationListener() {
@@ -202,7 +168,7 @@ public class ItemsFragment extends BaseFragment {
         }
 
 
-        private void animateRemoving(final ViewHolder holder, final long duration) {
+        private void animateRemoving(final ItemViewHolder holder, final long duration) {
             new FlipVerticalAnimation(holder.addImageView)
                     .setDuration(duration)
                     .setListener(new AnimationListener() {
@@ -214,17 +180,48 @@ public class ItemsFragment extends BaseFragment {
                     .animate();
         }
 
+        @Override
+        public void onClickItem(View itemLayout) {
+            final int position = ViewUtil.getPositionOfChild(itemLayout, R.id.item_linear_layout, mItemsRecyclerView);
+            final Item item = mItemsArray.get(position);
+            final ItemViewHolder holder = new ItemViewHolder(itemLayout, this);
 
-        class ViewHolder {
+            final long duration = 400;
+            if (isAdded(item)) {
+                //removing
+                mListener.onRemoveItem(item);
+                animateRemoving(holder, duration);
+            } else {
+                //adding
+                mListener.onAddItem(item);
+                animateAdding(holder, duration);
+            }
+
+        }
+
+
+        class ItemViewHolder extends RecyclerView.ViewHolder {
             @InjectView(R.id.item_add_image)
             ImageView addImageView;
             @InjectView(R.id.item_name)
             TextView nameTxt;
 
-            public ViewHolder(final View layout) {
+
+            ItemListener mListener;
+
+            public ItemViewHolder(final View layout, final ItemListener listener) {
+                super(layout);
+                mListener = listener;
 
                 ButterKnife.inject(this, layout);
             }
+
+            @OnClick(R.id.item_linear_layout)
+            public void onClickItem(View view) {
+                mListener.onClickItem(view);
+            }
         }
+
+
     }
 }
