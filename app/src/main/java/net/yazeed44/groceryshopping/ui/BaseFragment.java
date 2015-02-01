@@ -15,10 +15,22 @@ public class BaseFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(shouldDisplayUp());
+
+        if (shouldHideSearchView()) {
+            ((MainActivity) getActivity()).hideSearchView();
+        } else {
+            ((MainActivity) getActivity()).showSearchView();
+        }
+
+
     }
 
 
     protected boolean shouldDisplayUp() {
+        return true;
+    }
+
+    protected boolean shouldHideSearchView() {
         return true;
     }
 }

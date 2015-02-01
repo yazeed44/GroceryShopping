@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.BlinkAnimation;
@@ -36,6 +38,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     public static final ArrayList<Item> CHOSEN_ITEMS = new ArrayList<>();
     @InjectView(R.id.items_search_view)
     SearchView mItemsSearchView;
+
     private CategoriesFragment mCategoriesFragment;
     private ItemsTabsFragment mItemsFragment;
     private SearchItemsFragment mSearchItemsFragment;
@@ -55,6 +58,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
         ButterKnife.inject(this);
 
+        initUtils();
         showCategories(savedInstanceState);
 
         setupItemsSearch();
@@ -64,30 +68,28 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
 
     private void initUtils() {
+
         ViewUtil.init(this);
         ImageLoader.getInstance().init(new ImageLoaderConfiguration.Builder(this).build());
-        DBUtil.initInstance(this);
-    }
 
-    /*private void setupToolbar(){
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
-    }*/
+        DBUtil.initInstance(this);
+
+    }
 
     private void showCategories(final Bundle bundle) {
 
+
         if (bundle == null) {
-            initUtils();
-
-            if (mCategoriesFragment == null) {
-                mCategoriesFragment = new CategoriesFragment();
-                mCategoriesFragment.setCategoryListener(this);
-            }
-
+            mCategoriesFragment = new CategoriesFragment();
+            mCategoriesFragment.setCategoryListener(this);
+            Log.d("initialize categories", "Categories fragment and listener is initialized");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_container, mCategoriesFragment)
                     .commit();
 
         }
+
+
     }
 
     private void showSearchFragment() {
@@ -163,14 +165,17 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.menu_shopping_cart, menu);
+        getMenuInflater().inflate(R.menu.menu_add_item_manually, menu);
 
-        final View shoppingCartLayout = MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart));
-
-        mShoppingCartImageView = (ImageView) shoppingCartLayout.findViewById(R.id.action_shopping_cart_image);
-        mShoppingCartCounterView = (TextView) shoppingCartLayout.findViewById(R.id.action_shopping_cart_counter);
+        initShoppingCart(MenuItemCompat.getActionView(menu.findItem(R.id.action_shopping_cart)));
         setupShoppingCart();
         updateShoppingCart();
         return true;
+    }
+
+    private void initShoppingCart(final View cartLayout) {
+        mShoppingCartImageView = ButterKnife.findById(cartLayout, R.id.action_shopping_cart_image);
+        mShoppingCartCounterView = ButterKnife.findById(cartLayout, R.id.action_shopping_cart_counter);
     }
 
     private void setupShoppingCart() {
@@ -193,12 +198,36 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
         switch (item.getItemId()) {
 
+            case R.id.action_add_item_manually:
+                showAddItemDialog();
+                break;
+
             default:
                 break;
         }
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAddItemDialog() {
+        final EditText itemTxt = new EditText(this);
+        itemTxt.setHint(R.string.hint_add_item);
+
+        ViewUtil.createDialog(this)
+                .title(R.string.title_add_item)
+                .positiveText(R.string.ok)
+                .negativeText(R.string.cancel)
+                .customView(itemTxt, false)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        final String name = itemTxt.getText().toString();
+                        onAddItem(new Item(name));
+                    }
+                })
+                .show();
     }
 
 
@@ -212,7 +241,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         //TODO add animation
 
         showItems(category);
-        hideSearchView();
     }
 
 
@@ -247,7 +275,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             getSupportFragmentManager().popBackStack();
             getSupportActionBar().setTitle(null);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            showSearchView();
 
         } else if (mSearchItemsFragment != null && mSearchItemsFragment.isVisible()) {
 
@@ -274,18 +301,18 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
     }
 
-    private void showSearchView() {
+    void showSearchView() {
         ((View) mItemsSearchView.getParent()).setVisibility(View.VISIBLE);
     }
 
-    private void hideSearchView() {
+    void hideSearchView() {
         ((View) mItemsSearchView.getParent()).setVisibility(View.GONE);
     }
 
     @Override
     public void onAddItem(Item item) {
         CHOSEN_ITEMS.add(item);
-        Log.d("onAddItem", item.name + "  has been checked");
+        Log.d("onAddItem", item.name + "  has been added");
         updateShoppingCart();
 
     }
@@ -293,7 +320,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     @Override
     public void onRemoveItem(Item item) {
         CHOSEN_ITEMS.remove(item);
-        Log.d("onRemoveItem", item.name + "  has been Un checked");
+        Log.d("onRemoveItem", item.name + "  has been removed");
         updateShoppingCart();
 
 

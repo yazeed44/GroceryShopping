@@ -33,6 +33,11 @@ public class SearchItemsFragment extends ItemsFragment {
     }
 
     @Override
+    protected boolean shouldHideSearchView() {
+        return false;
+    }
+
+    @Override
     protected ArrayList<Item> getItems() {
         return mQueryResult;
     }

@@ -1,8 +1,10 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +67,22 @@ public class CategoriesFragment extends BaseFragment {
         mCategoryListener = listener;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCategoryListener = (OnClickCategoryListener) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCategoryListener = null;
+    }
+
+    @Override
+    protected boolean shouldHideSearchView() {
+        return false;
+    }
 
     public static interface OnClickCategoryListener {
         void onClickCategory(final Category category);
@@ -160,7 +178,11 @@ public class CategoriesFragment extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            mCategoryListener.onClickCategory(mCategories.get(position));
+            if (mCategoryListener != null) {
+                mCategoryListener.onClickCategory(mCategories.get(position));
+            } else {
+                Log.w("onCategoryClick", "Category listener is null");
+            }
         }
 
 

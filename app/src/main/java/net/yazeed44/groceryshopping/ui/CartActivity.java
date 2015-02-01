@@ -44,7 +44,7 @@ public class CartActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_items);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.actionbar_title_review_items);
+        getSupportActionBar().setTitle(R.string.actionbar_title_cart);
 
         initPrefixes();
         initRecycler();
@@ -78,7 +78,7 @@ public class CartActivity extends BaseActivity {
         switch (item.getItemId()) {
 
             case R.id.action_done:
-                openItemsMsgDialog();
+                openItemsMsgActivity();
                 break;
 
             default:
@@ -89,7 +89,7 @@ public class CartActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void openItemsMsgDialog() {
+    private void openItemsMsgActivity() {
         final Intent msgIntent = new Intent(this, ItemsMsgActivity.class);
         startActivity(msgIntent);
     }

@@ -1,5 +1,6 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -73,6 +74,18 @@ public class ItemsFragment extends BaseFragment {
     protected ItemsAdapter createAdapter() {
         return new ItemsAdapter();
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        setListener((OnCheckItemListener) activity);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        setListener(null);
     }
 
     public void setListener(final OnCheckItemListener listener) {

@@ -36,7 +36,6 @@ public final class ViewUtil {
     public static MaterialDialog.Builder createDialog(final Context context) {
         return new MaterialDialog.Builder(context)
                 .theme(Theme.LIGHT)
-                .typeface(getMediumTypeface(), getRegularDefaultTypeface())
                 .positiveColorRes(R.color.dialog_pos_btn_text_color)
                 .negativeColorRes(R.color.dialog_neg_btn_text_color)
                 ;

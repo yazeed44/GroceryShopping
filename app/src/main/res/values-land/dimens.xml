@@ -3,4 +3,6 @@
 
     <dimen name="category_width">150dp</dimen>
     <dimen name="category_height">135dp</dimen>
+
+
 </resources>

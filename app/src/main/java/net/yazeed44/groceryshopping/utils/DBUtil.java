@@ -2,6 +2,7 @@ package net.yazeed44.groceryshopping.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
@@ -30,15 +31,29 @@ public final class DBUtil {
     }
 
     public static void initInstance(final Activity activity) {
+
+
         mContext = activity;
         getCategories();//Initialize
 
 
         ItemsDB.initInstance(ItemsDBHelper.createInstance(mContext));
-        new CheckDBTask(activity).execute();
+
+        if (shouldInitialize(activity))
+            new CheckDBTask(activity).execute();
 
 
     }
+
+    private static boolean shouldInitialize(final Context context) {
+        final String PREFS_NAME = "MyPrefsFile";
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        final String hasInitializedKey = "hasInitializedKey";
+        final boolean shouldInitialize = settings.getBoolean(hasInitializedKey, true);
+        settings.edit().putBoolean(hasInitializedKey, false).apply();
+        return shouldInitialize;
+    }
+
 
     public static ArrayList<Category> getCategories() {
         if (mCategories != null) {
@@ -56,7 +71,7 @@ public final class DBUtil {
                 new Category("spices", "البهارات", R.drawable.spices),
                 new Category("bookStore", "المكتبة", R.drawable.bookstore),
 
-                new Category("Others", "أخرى", android.R.drawable.dialog_frame)
+                new Category("Others", "أخرى", R.drawable.others)
         };
 
         mCategories = new ArrayList<>();

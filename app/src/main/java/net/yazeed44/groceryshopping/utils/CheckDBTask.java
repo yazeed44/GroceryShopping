@@ -37,7 +37,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
     public static final int DOWNLOAD_BUFFER_SIZE = 16000;
     public static final String DOWNLOAD_FAILED = "DownloadFailed";
     public static final String TAG = "checkDBThread";
-    public static final String DB_DOWNLOAD_URL = "https://www.dropbox.com/s/raochv63zzzvhu0/shoppingitems.db?dl=1";
+    public static final String DB_DOWNLOAD_URL = "https://www.dropbox.com/s/miid75944sge2lg/shoppingItems.db?dl=1";
     public static final String DB_DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ItemsDBHelper.DB_NAME;
     private static String mLocalDBPath;
     private WeakReference<Activity> mWeakReferenceActivity;
@@ -63,20 +63,22 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
                     .title(R.string.title_new_update)
                     .positiveText(R.string.pos_btn_update_dialog)
 
-                    .callback(new MaterialDialog.Callback() {
-                        @Override
-                        public void onNegative(MaterialDialog materialDialog) {
-                            materialDialog.dismiss();
-                        }
+                    .callback(new MaterialDialog.ButtonCallback() {
 
-                        @Override
-                        public void onPositive(MaterialDialog materialDialog) {
-                            materialDialog.dismiss();
-                            new ReplaceDBTask().execute();
+                                  @Override
+                                  public void onNegative(MaterialDialog materialDialog) {
+                                      materialDialog.dismiss();
+                                  }
+
+                                  @Override
+                                  public void onPositive(MaterialDialog materialDialog) {
+                                      materialDialog.dismiss();
+                                      new ReplaceDBTask().execute();
 
 
-                        }
-                    }).build();
+                                  }
+                              }
+                    ).build();
             updateDialog.show();
 
         } else if (action == DatabaseAction.INSTALL_NEW_ONE) {
