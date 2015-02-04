@@ -15,10 +15,7 @@
     <dimen name="item_width">70dp</dimen>
     <dimen name="item_height">40dp</dimen>
 
-    <dimen name="review_item_btns_margin_left">40dp</dimen>
     <dimen name="review_item_btns_text_size">4sp</dimen>
-
-    <dimen name="items_msg_btn_text_size">5sp</dimen>
 
     <dimen name="share_app_column_height">70dp</dimen>
     <dimen name="share_app_column_width">70dp</dimen>

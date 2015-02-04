@@ -5,4 +5,5 @@
     <integer name="review_items_column_num">2</integer>
     <integer name="share_apps_column_num">3</integer>
     <integer name="items_msg_max_lines">12</integer>
+    <integer name="categories_items_msg_column_num">3</integer>
 </resources>

@@ -2,27 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_horizontal_margin"
+
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
-
         style="@style/MyCardViewStyle"
-
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="0.45">
 
-
-        <TextView
-            android:id="@+id/items_msg_txt"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/categories_items_recycler"
+            style="@style/MyRecyclerViewStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|center"
-            android:hint="@string/hint_items_msg"
-            android:maxLines="@integer/items_msg_max_lines"
-            android:padding="16dp"
-            android:scrollbars="vertical"
-            android:textSize="14sp" />
+
+
+            android:layout_height="wrap_content" />
+
 
     </android.support.v7.widget.CardView>
 
@@ -30,8 +26,9 @@
     <android.support.v7.widget.CardView
         style="@style/MyCardViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_gravity="center"
+        android:layout_weight="0.55"
         android:orientation="vertical">
 
         <LinearLayout
@@ -52,12 +49,11 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/share_apps_recycler"
+                style="@style/MyRecyclerViewStyle"
                 android:layout_width="match_parent"
+
+
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:clipToPadding="false"
-                android:scrollbarStyle="outsideOverlay"
-                android:scrollbars="vertical"
 
 
                 />

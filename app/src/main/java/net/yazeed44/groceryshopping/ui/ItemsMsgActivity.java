@@ -11,7 +11,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +24,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import net.yazeed44.groceryshopping.R;
-import net.yazeed44.groceryshopping.utils.ItemsMsgFormatter;
+import net.yazeed44.groceryshopping.utils.ItemsMsgOrganizer;
 import net.yazeed44.groceryshopping.utils.ShareApp;
 import net.yazeed44.groceryshopping.utils.ViewUtil;
 
@@ -41,13 +40,14 @@ import butterknife.OnClick;
  */
 public class ItemsMsgActivity extends BaseActivity {
 
-    @InjectView(R.id.items_msg_txt)
-    TextView mMsgTxt;
 
+    public static final String APP_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.yousafco.groceryshopping";
+    @InjectView(R.id.categories_items_recycler)
+    RecyclerView mCategoriesRecycler;
     @InjectView(R.id.share_apps_recycler)
     RecyclerView mShareAppsRecycler;
-
     private int mNoteCount = 1;
+    private ItemsMsgOrganizer mItemsOrganized;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +57,24 @@ public class ItemsMsgActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.actionbar_title_share_items);
 
         ButterKnife.inject(this);
-        setupMsgText();
-        setupShareApps();
+        setupCategoriesItemsRecycler();
+        setupShareAppsRecycler();
     }
 
-    private void setupShareApps() {
+    private void setupCategoriesItemsRecycler() {
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.categories_items_msg_column_num));
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mCategoriesRecycler.setLayoutManager(gridLayoutManager);
+
+        mItemsOrganized = ItemsMsgOrganizer.from(MainActivity.CHOSEN_ITEMS);
+
+        final List<ItemsMsgOrganizer.ItemsOrganized> itemsOrganized = mItemsOrganized.organize();
+        mCategoriesRecycler.setAdapter(new CategoriesItemsAdapter(itemsOrganized));
+
+    }
+
+    private void setupShareAppsRecycler() {
 
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.share_apps_column_num));
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -75,14 +88,6 @@ public class ItemsMsgActivity extends BaseActivity {
     private void setupShareAppsAdapter() {
         mShareAppsRecycler.setAdapter(new ShareAppAdapter(getAppsToShare()));
     }
-
-    private void setupMsgText() {
-
-
-        mMsgTxt.setMovementMethod(new ScrollingMovementMethod());
-        mMsgTxt.setText(ItemsMsgFormatter.from(MainActivity.CHOSEN_ITEMS).format());
-    }
-
 
     private List<ShareApp> getAppsToShare() {
         final List<ShareApp> apps = new ArrayList<>();
@@ -138,14 +143,18 @@ public class ItemsMsgActivity extends BaseActivity {
 
     private CharSequence getShareTxt() {
 
-        return mMsgTxt.getText();
+        final String shareAppTxt = getResources().getString(R.string.msg_shared_by) + " " + getResources().getString(R.string.app_name) + "\n" + APP_PLAY_STORE_URL;
+
+        return mItemsOrganized.getText() + shareAppTxt;
     }
 
     private java.util.List<ResolveInfo> getNativeAppsToShare() {
 
 
         Intent intent = new Intent(Intent.ACTION_SEND);
+
         intent.putExtra(Intent.EXTRA_TEXT, "");
+
         intent.setType("text/plain");
         PackageManager packageManager = getPackageManager();
         return packageManager.queryIntentActivities(intent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
@@ -189,7 +198,8 @@ public class ItemsMsgActivity extends BaseActivity {
                     public void onPositive(MaterialDialog dialog) {
                         super.onPositive(dialog);
                         final CharSequence noteTxt = noteString + " " + mNoteCount++ + " : " + typeNoteTxt.getText() + Html.fromHtml("<br/>");
-                        mMsgTxt.append(noteTxt);
+                        //TODO
+                        // mMsgTxt.append(noteTxt);
                         setupShareAppsAdapter();
                     }
                 }).build();
@@ -198,6 +208,55 @@ public class ItemsMsgActivity extends BaseActivity {
     private interface ShareAppListener {
         void onClickAppLayout(View appLayout);
     }
+
+    private class CategoriesItemsAdapter extends RecyclerView.Adapter<CategoriesItemsViewHolder> {
+
+
+        private List<ItemsMsgOrganizer.ItemsOrganized> mItemsOrganized;
+
+        CategoriesItemsAdapter(final List<ItemsMsgOrganizer.ItemsOrganized> itemsOrganized) {
+
+            mItemsOrganized = itemsOrganized;
+        }
+
+
+        @Override
+        public CategoriesItemsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View itemView = getLayoutInflater().inflate(R.layout.element_items_msg, parent, false);
+            return new CategoriesItemsViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(CategoriesItemsViewHolder holder, int position) {
+
+            final ItemsMsgOrganizer.ItemsOrganized itemsOrganized = mItemsOrganized.get(position);
+
+            holder.name.setText(itemsOrganized.categoryName);
+            holder.items.setText(itemsOrganized.generateTxt());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItemsOrganized.size();
+        }
+    }
+
+    class CategoriesItemsViewHolder extends RecyclerView.ViewHolder {
+
+        @InjectView(R.id.items_msg_category_name)
+        TextView name;
+
+        @InjectView(R.id.items_msg_category_items)
+        TextView items;
+
+        public CategoriesItemsViewHolder(View itemView) {
+            super(itemView);
+
+            ButterKnife.inject(this, itemView);
+        }
+    }
+
+
 
     private class ShareAppAdapter extends RecyclerView.Adapter<ShareAppHolder> implements ShareAppListener {
 

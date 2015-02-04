@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             private void query(final String query) {
 
                 if (mSearchItemsFragment != null)
-                mSearchItemsFragment.query(query);
+                    mSearchItemsFragment.query(query);
             }
 
             @Override
@@ -286,20 +286,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             super.onBackPressed();
         }
     }
-    private void updateShoppingCart() {
-
-        new BlinkAnimation(mShoppingCartImageView)
-                .setListener(new AnimationListener() {
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        mShoppingCartCounterView.setText(CHOSEN_ITEMS.size() + "");
-                    }
-                })
-                .animate();
-
-
-
-    }
 
     void showSearchView() {
         ((View) mItemsSearchView.getParent()).setVisibility(View.VISIBLE);
@@ -322,6 +308,20 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         CHOSEN_ITEMS.remove(item);
         Log.d("onRemoveItem", item.name + "  has been removed");
         updateShoppingCart();
+
+
+    }
+
+    private void updateShoppingCart() {
+
+        new BlinkAnimation(mShoppingCartImageView)
+                .setListener(new AnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mShoppingCartCounterView.setText(CHOSEN_ITEMS.size() + "");
+                    }
+                })
+                .animate();
 
 
     }

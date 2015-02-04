@@ -33,7 +33,12 @@
 
     <style name="MyCardViewStyle" parent="CardView.Light">
         <item name="cardUseCompatPadding">true</item>
+    </style>
 
-
+    <style name="MyRecyclerViewStyle">
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>

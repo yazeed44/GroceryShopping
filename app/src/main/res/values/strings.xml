@@ -43,6 +43,7 @@
     <string name="desc_shopping_cart">سلة المشتريات</string>
     <string name="action_add_item_manually">إضافة غرض يدويا</string>
     <string name="hint_add_item">اسم الغرض</string>
-    <string name="title_add_item">إضافة غرض يدويا</string>>
+    <string name="title_add_item">إضافة غرض يدويا</string>
+    <string name="msg_shared_by">تمت مشاركة المشتريات بواسطة تطبيق</string>>
 
 </resources>

@@ -12,15 +12,15 @@ import java.util.Comparator;
 public class QueryCategoryThread extends Thread {
 
     private static ArrayList<Item> mItems;
-    private final String mCategoryName;
+    private final Category mCategory;
 
-    private QueryCategoryThread(final String categoryName) {
-        mCategoryName = categoryName;
-        setName(mCategoryName + " thread");
+    private QueryCategoryThread(final Category category) {
+        mCategory = category;
+        setName(mCategory.name + " thread");
     }
 
-    public static ArrayList<Item> getItems(final String categoryName) {
-        final QueryCategoryThread queryThread = new QueryCategoryThread(categoryName);
+    public static ArrayList<Item> getItems(final Category category) {
+        final QueryCategoryThread queryThread = new QueryCategoryThread(category);
         ThreadUtil.startAndJoin(queryThread);
         sortItems();
         return mItems;
@@ -39,7 +39,7 @@ public class QueryCategoryThread extends Thread {
     public void run() {
         final ItemsDB db = ItemsDB.getInstance();
         db.openDatabase();
-        mItems = db.getItems(mCategoryName);
+        mItems = db.getItems(mCategory);
         db.closeDatabase();
     }
 }

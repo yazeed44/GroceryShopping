@@ -10,18 +10,21 @@ import java.util.List;
  * Created by yazeed44 on 12/31/14.
  */
 public final class Item {
-    public static final String DEFAULT_UNITS = "كيلو";
+    public static final String DEFAULT_UNITS = "";
     public static final String DEFAULT_AMOUNT = "1";
+    public static final String DEFAULT_CATEGORY = "أخرى";
     private static int mCount = 0;
     public final String name;
     public final List<String> units;
     public final int key;
+    public final String category;
     private String mAmount;
     private String mChosenUnit;
 
-    public Item(String name, String units, String defaultAmount) {
+    public Item(String name, String units, String defaultAmount, String category) {
         this.name = name;
         this.units = generateUnits(units);
+        this.category = category;
         setChosenUnit(this.units.get(0));
         setAmount(defaultAmount);
         key = mCount++;
@@ -30,6 +33,7 @@ public final class Item {
     public Item(String name) {
         this.name = name;
         units = generateUnits(DEFAULT_UNITS);
+        category = DEFAULT_CATEGORY;
         setChosenUnit(units.get(0));
         setAmount(DEFAULT_AMOUNT);
         key = mCount++;

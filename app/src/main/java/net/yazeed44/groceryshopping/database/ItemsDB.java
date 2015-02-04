@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Looper;
 import android.util.Log;
 
+import net.yazeed44.groceryshopping.utils.Category;
 import net.yazeed44.groceryshopping.utils.Item;
 
 import java.util.ArrayList;
@@ -59,16 +60,16 @@ public class ItemsDB {
         }
     }
 
-    public ArrayList<Item> getItems(final String categoryName) {
+    public ArrayList<Item> getItems(final Category category) {
         final ArrayList<Item> items = new ArrayList<>();
 
         //TODO catch the execption of no such table then force downloading a new DB
-        final Cursor cursor = mDB.rawQuery("SELECT * FROM " + categoryName, null);
+        final Cursor cursor = mDB.rawQuery("SELECT * FROM " + category.tableName, null);
 
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            items.add(getItem(cursor));
+            items.add(getItem(cursor, category.name));
 
             cursor.moveToNext();
         }
@@ -78,11 +79,12 @@ public class ItemsDB {
         return items;
     }
 
-    private Item getItem(final Cursor cursor) {
+    private Item getItem(final Cursor cursor, final String categoryName) {
         final String name = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_NAME));
         final String units = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_UNITS));
         final String defaultAmount = cursor.getString(cursor.getColumnIndex(ItemsDBHelper.COLUMN_DEF_AMOUNT));
 
-        return new Item(name, units, defaultAmount);
+
+        return new Item(name, units, defaultAmount, categoryName);
     }
 }

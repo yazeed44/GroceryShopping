@@ -87,8 +87,8 @@ public final class DBUtil {
         return context.getDatabasePath(ItemsDBHelper.DB_NAME).getAbsolutePath();
     }
 
-    public static ArrayList<Item> getItems(final String categoryName) {
-        return QueryCategoryThread.getItems(categoryName);
+    public static ArrayList<Item> getItems(final Category category) {
+        return QueryCategoryThread.getItems(category);
     }
 
     public static ItemsDBHelper createEmptyDB() {

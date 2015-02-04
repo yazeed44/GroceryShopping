@@ -12,7 +12,7 @@ public final class Category {
 
     public final String name;
     public final int thumbnailRes;
-    private final String tableName;
+    public final String tableName;
     private ArrayList<Item> mItems;
     private Bitmap mBitmap;
 
@@ -28,7 +28,7 @@ public final class Category {
         if (mItems != null) {
             return mItems;
         }
-        mItems = DBUtil.getItems(tableName);
+        mItems = DBUtil.getItems(this);
         Log.d("getItems", mItems.toString());
 
         return mItems;
