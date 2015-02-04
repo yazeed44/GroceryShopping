@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -16,8 +15,6 @@ import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.database.ItemsDB;
 import net.yazeed44.groceryshopping.database.ItemsDBHelper;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * Created by yazeed44 on 1/6/15.
@@ -34,8 +29,6 @@ import java.net.URLConnection;
 public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Void> {
 
 
-    public static final int DOWNLOAD_BUFFER_SIZE = 16000;
-    public static final String DOWNLOAD_FAILED = "DownloadFailed";
     public static final String TAG = "checkDBThread";
     public static final String DB_DOWNLOAD_URL = "https://www.dropbox.com/s/miid75944sge2lg/shoppingItems.db?dl=1";
     public static final String DB_DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ItemsDBHelper.DB_NAME;
@@ -110,15 +103,6 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         return null;
     }
 
-    private boolean isPathValid(final String path) {
-
-        if (path == null || DOWNLOAD_FAILED.equals(path) || TextUtils.isEmpty(path)) {
-            Log.e(TAG, "There's problem with the downloaded db   " + path);
-            return false;
-        }
-
-        return true;
-    }
 
     private void deleteDownloadedDB() {
         new File(DB_DOWNLOAD_PATH).delete();
@@ -129,7 +113,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
         final String newDatabasePath = downloadDatabase();
 
-        if (!isPathValid(newDatabasePath)) {
+        if (!LoadUtil.isDownloadedFileValid(newDatabasePath)) {
             //TODO Error handle
             deleteDownloadedDB();
             throw new IllegalStateException("The database haven't downloaded successfully !!");
@@ -183,7 +167,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         final String newDatabasePath = downloadDatabase();
 
         boolean newUpdateExists;
-        if (!isPathValid(newDatabasePath)) {
+        if (LoadUtil.isDownloadedFileValid(newDatabasePath)) {
             return false;
         }
 
@@ -207,59 +191,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
     }
 
     private String downloadDatabase() {
-
-        final File outputFile = new File(DB_DOWNLOAD_PATH);
-
-        if (outputFile.exists()) {
-            return DB_DOWNLOAD_PATH;
-        } else {
-            try {
-                outputFile.createNewFile();
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-                e.printStackTrace();
-            }
-        }
-
-        String dbPath;
-
-
-        try {
-            // Log.d(TAG, "downloading database");
-            final URL url = new URL(DB_DOWNLOAD_URL);
-                        /* Open a connection to that URL. */
-            URLConnection urlConnection = url.openConnection();
-            urlConnection.setUseCaches(false);
-
-            //Start download
-            final BufferedInputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
-
-            final FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
-            final BufferedOutputStream outputStream = new BufferedOutputStream(fileOutputStream, DOWNLOAD_BUFFER_SIZE);
-            final byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(data, 0, data.length)) >= 0) {
-                outputStream.write(data, 0, bytesRead);
-            }
-
-            outputStream.close();
-            fileOutputStream.close();
-            inputStream.close();
-
-            dbPath = outputFile.getAbsolutePath();
-            Log.i("downloadDatabase", "Database successfully downloaded + \n " + dbPath);
-
-        } catch (IOException e) {
-            Log.e(TAG, "downloadDatabase Error: ", e);
-            return DOWNLOAD_FAILED;
-        } catch (NullPointerException e) {
-            Log.e(TAG, "downloadDatabase Error: ", e);
-            return DOWNLOAD_FAILED;
-        } catch (Exception e) {
-            Log.e(TAG, "downloadDatabase Error: ", e);
-            return DOWNLOAD_FAILED;
-        }
-        return dbPath;
+        return LoadUtil.downloadFile(DB_DOWNLOAD_URL, DB_DOWNLOAD_PATH);
 
     }
 

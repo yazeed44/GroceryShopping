@@ -49,6 +49,8 @@ public class ItemsMsgActivity extends BaseActivity {
     private int mNoteCount = 1;
     private ItemsMsgOrganizer mItemsOrganized;
 
+    private Intent mShareIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +59,19 @@ public class ItemsMsgActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.actionbar_title_share_items);
 
         ButterKnife.inject(this);
+
         setupCategoriesItemsRecycler();
+        initShareIntent();
         setupShareAppsRecycler();
+    }
+
+    private void initShareIntent() {
+        mShareIntent = new Intent(Intent.ACTION_SEND);
+        mShareIntent.setType("text/plain");
+        mShareIntent.putExtra(Intent.EXTRA_TEXT, getShareTxt());
+        mShareIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.subject_items_msg));
+
+
     }
 
     private void setupCategoriesItemsRecycler() {
@@ -66,6 +79,7 @@ public class ItemsMsgActivity extends BaseActivity {
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         mCategoriesRecycler.setLayoutManager(gridLayoutManager);
+
 
         mItemsOrganized = ItemsMsgOrganizer.from(MainActivity.CHOSEN_ITEMS);
 
@@ -95,8 +109,7 @@ public class ItemsMsgActivity extends BaseActivity {
         for (final ResolveInfo resolveInfo : getNativeAppsToShare()) {
 
             final ShareApp app = ShareApp.Builder.from(resolveInfo, this)
-                    .setText(getShareTxt())
-                    .setSubject(getResources().getString(R.string.subject_items_msg))
+                    .setIntent(mShareIntent)
                     .build();
 
             apps.add(app);
@@ -105,6 +118,7 @@ public class ItemsMsgActivity extends BaseActivity {
         //Adding copy content , technically it isn't an app
 
         apps.add(createCopyShare());
+
 
         return apps;
 
@@ -117,8 +131,8 @@ public class ItemsMsgActivity extends BaseActivity {
 
         return new ShareApp.Builder(copyLabel)
                 .setIcon(copyIcon)
-                .setText(getShareTxt())
-                .setClickListener(new ShareApp.AppClickListener() {
+                .setIntent(mShareIntent)
+                .setOnClickListener(new ShareApp.AppClickListener() {
                     @Override
                     public void onClickApp(Context context, ActivityInfo activityInfo, final CharSequence text) {
                         copyMsgToClipboard(getShareTxt().toString());
@@ -145,19 +159,13 @@ public class ItemsMsgActivity extends BaseActivity {
 
         final String shareAppTxt = getResources().getString(R.string.msg_shared_by) + " " + getResources().getString(R.string.app_name) + "\n" + APP_PLAY_STORE_URL;
 
-        return mItemsOrganized.getText() + shareAppTxt;
+        return "\n" + mItemsOrganized.getText() + shareAppTxt;
     }
 
     private java.util.List<ResolveInfo> getNativeAppsToShare() {
 
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-
-        intent.putExtra(Intent.EXTRA_TEXT, "");
-
-        intent.setType("text/plain");
         PackageManager packageManager = getPackageManager();
-        return packageManager.queryIntentActivities(intent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
+        return packageManager.queryIntentActivities(mShareIntent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
     }
 
     @Override

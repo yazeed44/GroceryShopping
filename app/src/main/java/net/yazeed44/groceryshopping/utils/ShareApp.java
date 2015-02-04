@@ -20,10 +20,10 @@ public class ShareApp {
     private AppClickListener mListener;
 
     private ShareApp(final Builder builder) {
-        mActivityInfo = builder.activityInfo;
-        mText = builder.text;
-        appLabel = builder.appLabel;
-        icon = builder.icon;
+        mActivityInfo = builder.mActivityInfo;
+        mText = builder.mText;
+        appLabel = builder.mAppLabel;
+        icon = builder.mIcon;
         mListener = builder.listener;
     }
 
@@ -37,31 +37,27 @@ public class ShareApp {
     }
 
     public static class Builder {
-        private ActivityInfo activityInfo;
-        private CharSequence appLabel;
-        private Drawable icon;
-        private String type = "text/plain";
-        private String action = Intent.ACTION_SEND;
-        private String extraType = Intent.EXTRA_TEXT;
+        private ActivityInfo mActivityInfo;
+        private CharSequence mAppLabel;
+        private Drawable mIcon;
+
+        private Intent mIntent;
+
         private AppClickListener listener = new AppClickListener() {
             @Override
             public void onClickApp(Context context, ActivityInfo activityInfo, CharSequence text) {
-                Intent sendIntent = new Intent(action);
-                sendIntent.putExtra(extraType, text.toString());
-                sendIntent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
-                sendIntent.setType(type);
-                sendIntent.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
+
+                mIntent.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
 
 
-                context.startActivity(Intent.createChooser(sendIntent, ""));
+                context.startActivity(mIntent);
             }
         };
-        private CharSequence text;
-        private CharSequence subject = "";
+        private CharSequence mText;
 
 
         public Builder(final CharSequence label) {
-            this.appLabel = label;
+            this.mAppLabel = label;
         }
 
         public static Builder from(final ResolveInfo resolveInfo, final Context context) {
@@ -76,43 +72,24 @@ public class ShareApp {
 
 
         public Builder setIcon(final Drawable drawable) {
-            this.icon = drawable;
-            return this;
-        }
-
-        public Builder setType(final String type) {
-            this.type = type;
+            this.mIcon = drawable;
             return this;
         }
 
         public Builder setActivityInfo(final ActivityInfo info) {
-            this.activityInfo = info;
-            return this;
-        }
-
-        public Builder setAction(final String action) {
-            this.action = action;
-            return this;
-        }
-
-        public Builder setExtraType(final String extraType) {
-            this.extraType = extraType;
+            this.mActivityInfo = info;
             return this;
         }
 
 
-        public Builder setClickListener(final AppClickListener listener) {
+        public Builder setOnClickListener(final AppClickListener listener) {
             this.listener = listener;
             return this;
         }
 
-        public Builder setText(final CharSequence text) {
-            this.text = text;
-            return this;
-        }
 
-        public Builder setSubject(final CharSequence subject) {
-            this.subject = subject;
+        public Builder setIntent(final Intent intent) {
+            mIntent = (Intent) intent.clone();
             return this;
         }
 

@@ -22,9 +22,11 @@ import java.util.Comparator;
  */
 public final class DBUtil {
 
+    public static final String AD_DOWNLOAD_URL = "";
     private static Context mContext;
     private static ArrayList<Category> mCategories;
     private static ArrayList<Item> mItems;
+    private static Ad mAd;
 
     private DBUtil() {
         throw new AssertionError();
@@ -148,4 +150,13 @@ public final class DBUtil {
     }
 
 
+    public static Ad getAd() {
+
+        if (mAd != null) {
+            return mAd;
+        }
+        //TODO Fetch image url and pdf url from txt file
+
+        return null;
+    }
 }

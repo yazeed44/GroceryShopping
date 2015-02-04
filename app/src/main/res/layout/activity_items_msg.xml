@@ -9,7 +9,7 @@
         style="@style/MyCardViewStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.45">
+        android:layout_weight="0.50">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/categories_items_recycler"
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_weight="0.55"
+        android:layout_weight="0.50"
         android:orientation="vertical">
 
         <LinearLayout
