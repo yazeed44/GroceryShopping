@@ -17,13 +17,13 @@ public class ItemsDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_UNITS = "units";
     public static final String COLUMN_DEF_AMOUNT = "def_amount";
-    private final Context mContext;
+    final Context context;
     private SQLiteDatabase db;
 
 
     private ItemsDBHelper(Context context, final int version) {
         super(context, DB_NAME, null, version);
-        mContext = context;
+        this.context = context;
     }
 
     public static ItemsDBHelper createInstance(final Context context) {
@@ -38,7 +38,7 @@ public class ItemsDBHelper extends SQLiteOpenHelper {
 
     public void createEmptyDB() {
 
-        if (DBUtil.localDBExists(mContext)) {
+        if (DBUtil.localDBExists(context)) {
             //DB Already created
         } else {
             getReadableDatabase();
@@ -58,7 +58,7 @@ public class ItemsDBHelper extends SQLiteOpenHelper {
 
     public void openDataBase() {
 
-        db = SQLiteDatabase.openDatabase(DBUtil.getLocalDBPath(mContext), null, SQLiteDatabase.OPEN_READONLY);
+        db = SQLiteDatabase.openDatabase(DBUtil.getLocalDBPath(context), null, SQLiteDatabase.OPEN_READONLY);
 
     }
 

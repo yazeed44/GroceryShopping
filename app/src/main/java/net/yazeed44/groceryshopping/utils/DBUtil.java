@@ -2,7 +2,6 @@ package net.yazeed44.groceryshopping.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
@@ -23,10 +22,11 @@ import java.util.Comparator;
 public final class DBUtil {
 
     public static final String AD_DOWNLOAD_URL = "";
-    private static Context mContext;
+    private static Activity mActivity;
     private static ArrayList<Category> mCategories;
     private static ArrayList<Item> mItems;
     private static Ad mAd;
+    private static CheckDBTask forceDbTask;
 
     private DBUtil() {
         throw new AssertionError();
@@ -35,25 +35,16 @@ public final class DBUtil {
     public static void initInstance(final Activity activity) {
 
 
-        mContext = activity;
+        mActivity = activity;
         getCategories();//Initialize
 
 
-        ItemsDB.initInstance(ItemsDBHelper.createInstance(mContext));
-
-        if (shouldInitialize(activity))
-            new CheckDBTask(activity).execute();
+        ItemsDB.initInstance(ItemsDBHelper.createInstance(mActivity));
 
 
-    }
+        new CheckDBTask(activity).execute();
 
-    private static boolean shouldInitialize(final Context context) {
-        final String PREFS_NAME = "MyPrefsFile";
-        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
-        final String hasInitializedKey = "hasInitializedKey";
-        final boolean shouldInitialize = settings.getBoolean(hasInitializedKey, true);
-        settings.edit().putBoolean(hasInitializedKey, false).apply();
-        return shouldInitialize;
+
     }
 
 
@@ -94,7 +85,7 @@ public final class DBUtil {
     }
 
     public static ItemsDBHelper createEmptyDB() {
-        final ItemsDBHelper helper = ItemsDBHelper.createInstance(mContext);
+        final ItemsDBHelper helper = ItemsDBHelper.createInstance(mActivity);
         helper.createEmptyDB();
         helper.openDataBase();
         return helper;
@@ -158,5 +149,19 @@ public final class DBUtil {
         //TODO Fetch image url and pdf url from txt file
 
         return null;
+    }
+
+    public static void forceDownloadNewDb(final Context context, final CheckDBTask.OnInstallingDb listener) {
+
+
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new CheckDBTask(context, listener).execute(CheckDBTask.DatabaseAction.INSTALL_NEW_ONE);
+
+            }
+
+        });
+
     }
 }

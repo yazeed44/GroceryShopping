@@ -61,6 +61,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         initUtils();
         showCategories(savedInstanceState);
 
+
         setupItemsSearch();
 
 
@@ -324,6 +325,11 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
                 .animate();
 
 
+    }
+
+    public void updateItemsFragment(final Category chosenCategory) {
+        getSupportFragmentManager().beginTransaction().remove(mItemsFragment).commit();
+        showItems(chosenCategory);
     }
 
 }

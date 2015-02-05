@@ -27,5 +27,4 @@ public final class ThreadUtil {
         Log.d("startAndJoin", thread.getName() + "  has done it's work !");
     }
 
-
 }

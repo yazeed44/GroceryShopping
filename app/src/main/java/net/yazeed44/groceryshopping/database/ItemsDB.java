@@ -2,10 +2,14 @@ package net.yazeed44.groceryshopping.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Looper;
 import android.util.Log;
 
+import net.yazeed44.groceryshopping.ui.MainActivity;
 import net.yazeed44.groceryshopping.utils.Category;
+import net.yazeed44.groceryshopping.utils.CheckDBTask;
+import net.yazeed44.groceryshopping.utils.DBUtil;
 import net.yazeed44.groceryshopping.utils.Item;
 
 import java.util.ArrayList;
@@ -19,6 +23,7 @@ public class ItemsDB {
     private static ItemsDB mInstance;
     private SQLiteDatabase mDB;
     private int mOpenCounter;
+    private Cursor mItemsCursor;
 
     public static synchronized void initInstance(ItemsDBHelper helper) {
 
@@ -64,14 +69,31 @@ public class ItemsDB {
         final ArrayList<Item> items = new ArrayList<>();
 
         //TODO catch the execption of no such table then force downloading a new DB
-        final Cursor cursor = mDB.rawQuery("SELECT * FROM " + category.tableName, null);
 
-        cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()) {
-            items.add(getItem(cursor, category.name));
+        try {
+            mItemsCursor = mDB.rawQuery("SELECT * FROM " + category.tableName, null);
+        } catch (SQLiteException ex) {
+            DBUtil.forceDownloadNewDb(mHelper.context, new CheckDBTask.OnInstallingDb() {
+                @Override
+                public void onInstallSuccessful(final MainActivity activity) {
+                    activity.updateItemsFragment(category);
+                }
+            });
 
-            cursor.moveToNext();
+        }
+
+        if (mItemsCursor == null) {
+            return items;
+        }
+
+
+        mItemsCursor.moveToFirst();
+
+        while (!mItemsCursor.isAfterLast()) {
+            items.add(getItem(mItemsCursor, category.name));
+
+            mItemsCursor.moveToNext();
         }
 
         Log.d("Local DB Version", mDB.getVersion() + "");

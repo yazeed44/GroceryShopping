@@ -1,6 +1,5 @@
 package net.yazeed44.groceryshopping.utils;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -14,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.database.ItemsDB;
 import net.yazeed44.groceryshopping.database.ItemsDBHelper;
+import net.yazeed44.groceryshopping.ui.MainActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,19 +26,28 @@ import java.lang.ref.WeakReference;
 /**
  * Created by yazeed44 on 1/6/15.
  */
-public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Void> {
+public class CheckDBTask extends AsyncTask<CheckDBTask.DatabaseAction, CheckDBTask.DatabaseAction, Void> {
 
 
     public static final String TAG = "checkDBThread";
     public static final String DB_DOWNLOAD_URL = "https://www.dropbox.com/s/miid75944sge2lg/shoppingItems.db?dl=1";
     public static final String DB_DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ItemsDBHelper.DB_NAME;
     private static String mLocalDBPath;
-    private WeakReference<Activity> mWeakReferenceActivity;
+    private WeakReference<Context> mWeakReferenceContext;
+    private OnInstallingDb mDbListener;
 
-    public CheckDBTask(final Activity activity) {
+    public CheckDBTask(final Context context) {
+        init(context);
+    }
 
-        mWeakReferenceActivity = new WeakReference<>(activity);
-        mLocalDBPath = DBUtil.getLocalDBPath(mWeakReferenceActivity.get());
+    public CheckDBTask(final Context context, OnInstallingDb dbListener) {
+        init(context);
+        mDbListener = dbListener;
+    }
+
+    private void init(final Context context) {
+        mWeakReferenceContext = new WeakReference<>(context);
+        mLocalDBPath = DBUtil.getLocalDBPath(mWeakReferenceContext.get());
     }
 
     @Override
@@ -49,7 +58,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         final DatabaseAction action = values[0];
         if (action == DatabaseAction.UPDATE_EXISTING_ONE) {
 
-            final MaterialDialog updateDialog = ViewUtil.createDialog(mWeakReferenceActivity.get())
+            final MaterialDialog updateDialog = ViewUtil.createDialog(mWeakReferenceContext.get())
                     .negativeText(R.string.neg_btn_update_dialog)
 
                     .content(R.string.content_new_update)
@@ -76,14 +85,50 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
         } else if (action == DatabaseAction.INSTALL_NEW_ONE) {
 
-            new ReplaceDBTask().execute();
+            if (isNetworkAvailable()) {
+                new ReplaceDBTask().execute();
+            } else {
+                //There's no network , The application can't download the database
+
+                ViewUtil.createDialog(mWeakReferenceContext.get())
+                        .iconRes(android.R.drawable.stat_notify_error)
+                        .content(R.string.title_error_no_network)
+                        .positiveText(R.string.pos_btn_error_no_network)
+                        .cancelable(false)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+
+                                if (isNetworkAvailable()) {
+                                    new ReplaceDBTask().execute();
+
+                                } else {
+                                    ViewUtil.toastShort(mWeakReferenceContext.get(), R.string.toast_error_no_network);
+                                    publishProgress(DatabaseAction.INSTALL_NEW_ONE);
+                                }
+                            }
+                        })
+                        .show();
+
+
+            }
+
+
         }
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(DatabaseAction... params) {
 
-        if (DBUtil.localDBExists(mWeakReferenceActivity.get())) {
+
+        if (params.length > 0 && params[0] == DatabaseAction.INSTALL_NEW_ONE) {
+            publishProgress(DatabaseAction.INSTALL_NEW_ONE);
+            return null;
+        }
+
+
+        if (DBUtil.localDBExists(mWeakReferenceContext.get())) {
 
             if (isNetworkAvailable() && newUpdateExists()) {
                 //There's new update
@@ -114,7 +159,6 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         final String newDatabasePath = downloadDatabase();
 
         if (!LoadUtil.isDownloadedFileValid(newDatabasePath)) {
-            //TODO Error handle
             deleteDownloadedDB();
             throw new IllegalStateException("The database haven't downloaded successfully !!");
         }
@@ -124,8 +168,10 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
 
         copyNewDB(newDatabasePath);
         dbHelper.close();
-        ItemsDB.initInstance(ItemsDBHelper.createInstance(mWeakReferenceActivity.get()));
+        ItemsDB.initInstance(ItemsDBHelper.createInstance(mWeakReferenceContext.get()));
         deleteDownloadedDB();
+
+
         Log.i("replaceLocalDB", "Set the new DB Successfully");
     }
 
@@ -149,7 +195,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mWeakReferenceActivity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) mWeakReferenceContext.get().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
@@ -200,6 +246,10 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         INSTALL_NEW_ONE, UPDATE_EXISTING_ONE
     }
 
+    public static interface OnInstallingDb {
+        void onInstallSuccessful(final MainActivity activity);
+    }
+
     private class ReplaceDBTask extends AsyncTask<Void, Void, Void> {
 
         private ProgressDialog loadingDialog;
@@ -212,9 +262,9 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         }
 
         private ProgressDialog createDbLoadingDialog() {
-            final ProgressDialog dialog = new ProgressDialog(mWeakReferenceActivity.get());
+            final ProgressDialog dialog = new ProgressDialog(mWeakReferenceContext.get());
             dialog.setTitle(R.string.title_loading_db);
-            dialog.setMessage(mWeakReferenceActivity.get().getResources().getString(R.string.content_loading_db));
+            dialog.setMessage(mWeakReferenceContext.get().getResources().getString(R.string.content_loading_db));
             dialog.setCancelable(false);
             dialog.setProgressStyle(R.attr.progressBarStyle);
 
@@ -226,6 +276,7 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         protected Void doInBackground(Void... params) {
             replaceLocalDB();
 
+
             return null;
         }
 
@@ -233,6 +284,10 @@ public class CheckDBTask extends AsyncTask<Void, CheckDBTask.DatabaseAction, Voi
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             loadingDialog.dismiss();
+            if (mDbListener != null && mWeakReferenceContext.get() instanceof MainActivity) {
+                mDbListener.onInstallSuccessful((MainActivity) mWeakReferenceContext.get());
+            }
+
         }
     }
 }
