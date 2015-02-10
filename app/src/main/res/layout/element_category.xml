@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/category_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/category_vertical_spacing"
+    android:paddingLeft="@dimen/category_horizontal_spacing"
+    android:paddingRight="@dimen/category_horizontal_spacing"
+    android:paddingTop="@dimen/category_vertical_spacing">
 
     <ImageView
         android:id="@+id/category_thumbnail"

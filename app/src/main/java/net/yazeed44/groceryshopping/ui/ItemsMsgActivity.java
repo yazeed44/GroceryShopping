@@ -213,6 +213,12 @@ public class ItemsMsgActivity extends BaseActivity {
                 }).build();
     }
 
+    @Override
+    protected AdView onCreateAd() {
+        //TODO
+        return null;
+    }
+
     private interface ShareAppListener {
         void onClickAppLayout(View appLayout);
     }
@@ -263,7 +269,6 @@ public class ItemsMsgActivity extends BaseActivity {
             ButterKnife.inject(this, itemView);
         }
     }
-
 
 
     private class ShareAppAdapter extends RecyclerView.Adapter<ShareAppHolder> implements ShareAppListener {

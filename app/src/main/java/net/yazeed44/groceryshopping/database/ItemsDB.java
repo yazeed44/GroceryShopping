@@ -68,9 +68,6 @@ public class ItemsDB {
     public ArrayList<Item> getItems(final Category category) {
         final ArrayList<Item> items = new ArrayList<>();
 
-        //TODO catch the execption of no such table then force downloading a new DB
-
-
         try {
             mItemsCursor = mDB.rawQuery("SELECT * FROM " + category.tableName, null);
         } catch (SQLiteException ex) {

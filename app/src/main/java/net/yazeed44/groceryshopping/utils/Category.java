@@ -34,7 +34,7 @@ public final class Category {
         return mItems;
     }
 
-    public Bitmap getCover() {
+    public Bitmap getThumbnail() {
         if (mBitmap != null) {
             return mBitmap;
         }

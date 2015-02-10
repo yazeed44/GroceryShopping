@@ -2,8 +2,6 @@ package net.yazeed44.groceryshopping.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -29,7 +27,6 @@ import java.lang.ref.WeakReference;
 public class CheckDBTask extends AsyncTask<CheckDBTask.DatabaseAction, CheckDBTask.DatabaseAction, Void> {
 
 
-    public static final String TAG = "checkDBThread";
     public static final String DB_DOWNLOAD_URL = "https://www.dropbox.com/s/miid75944sge2lg/shoppingItems.db?dl=1";
     public static final String DB_DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ItemsDBHelper.DB_NAME;
     private static String mLocalDBPath;
@@ -85,7 +82,7 @@ public class CheckDBTask extends AsyncTask<CheckDBTask.DatabaseAction, CheckDBTa
 
         } else if (action == DatabaseAction.INSTALL_NEW_ONE) {
 
-            if (isNetworkAvailable()) {
+            if (LoadUtil.isNetworkAvailable(mWeakReferenceContext.get())) {
                 new ReplaceDBTask().execute();
             } else {
                 //There's no network , The application can't download the database
@@ -100,7 +97,7 @@ public class CheckDBTask extends AsyncTask<CheckDBTask.DatabaseAction, CheckDBTa
                             public void onPositive(MaterialDialog dialog) {
                                 super.onPositive(dialog);
 
-                                if (isNetworkAvailable()) {
+                                if (LoadUtil.isNetworkAvailable(mWeakReferenceContext.get())) {
                                     new ReplaceDBTask().execute();
 
                                 } else {
@@ -130,7 +127,7 @@ public class CheckDBTask extends AsyncTask<CheckDBTask.DatabaseAction, CheckDBTa
 
         if (DBUtil.localDBExists(mWeakReferenceContext.get())) {
 
-            if (isNetworkAvailable() && newUpdateExists()) {
+            if (LoadUtil.isNetworkAvailable(mWeakReferenceContext.get()) && newUpdateExists()) {
                 //There's new update
 
                 publishProgress(DatabaseAction.UPDATE_EXISTING_ONE);
@@ -192,12 +189,6 @@ public class CheckDBTask extends AsyncTask<CheckDBTask.DatabaseAction, CheckDBTa
             Log.e("copyNewDB", e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) mWeakReferenceContext.get().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void deleteLocalDB() {

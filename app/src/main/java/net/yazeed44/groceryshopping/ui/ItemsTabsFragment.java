@@ -35,7 +35,7 @@ public class ItemsTabsFragment extends BaseFragment {
         final View tabsLayout = inflater.inflate(R.layout.fragment_tabs_items, container, false);
         mItemsTabs = (PagerSlidingTabStrip) tabsLayout.findViewById(R.id.items_tabs);
         mItemsPager = (ViewPager) tabsLayout.findViewById(R.id.items_pager);
-        final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
+        final int categoryIndex = getArguments().getInt(MainActivity.KEY_CATEGORY_INDEX);
         mChosenCategory = DBUtil.getCategories().get(categoryIndex);
 
 
@@ -80,6 +80,11 @@ public class ItemsTabsFragment extends BaseFragment {
         this.mCheckListener = listener;
     }
 
+    @Override
+    protected AdView onCreateAdView() {
+        return null;
+    }
+
     private class ItemsPagerAdapter extends FragmentPagerAdapter {
         public ItemsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -89,7 +94,7 @@ public class ItemsTabsFragment extends BaseFragment {
 
             final ItemsFragment fragment = new ItemsFragment();
             final Bundle bundle = new Bundle();
-            bundle.putInt(MainActivity.CATEGORY_INDEX_KEY, position);
+            bundle.putInt(MainActivity.KEY_CATEGORY_INDEX, position);
             fragment.setArguments(bundle);
             fragment.setListener(mCheckListener);
             Log.d("ItemsPagerAdapter", "Fragment  " + position + " is showing right now");

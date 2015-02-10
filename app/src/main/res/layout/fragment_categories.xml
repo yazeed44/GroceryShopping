@@ -3,16 +3,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <GridView
-    android:id="@+id/categories_list"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:columnWidth="@dimen/category_width"
-    android:horizontalSpacing="@dimen/category_horizontal_spacing"
-    android:numColumns="@integer/categories_column_num"
-    android:scrollbarStyle="outsideOverlay"
+    <include layout="@layout/ad_view" />
 
-    android:verticalSpacing="@dimen/category_vertical_spacing" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/categories_recycler"
+        style="@style/MyRecyclerViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </LinearLayout>

@@ -34,7 +34,7 @@ import butterknife.InjectView;
 public class MainActivity extends BaseActivity implements CategoriesFragment.OnClickCategoryListener, ItemsFragment.OnCheckItemListener {
 
 
-    public static final String CATEGORY_INDEX_KEY = "categoryIndexKey";
+    public static final String KEY_CATEGORY_INDEX = "categoryIndexKey";
     public static final ArrayList<Item> CHOSEN_ITEMS = new ArrayList<>();
     @InjectView(R.id.items_search_view)
     SearchView mItemsSearchView;
@@ -57,6 +57,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         getSupportActionBar().setTitle(null);
 
         ButterKnife.inject(this);
+
 
         initUtils();
         showCategories(savedInstanceState);
@@ -255,7 +256,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
 
         final Bundle chosenCategoryBundle = new Bundle();
-        chosenCategoryBundle.putInt(CATEGORY_INDEX_KEY, DBUtil.getCategories().indexOf(category));
+        chosenCategoryBundle.putInt(KEY_CATEGORY_INDEX, DBUtil.getCategories().indexOf(category));
 
         mItemsFragment.setArguments(chosenCategoryBundle);
 
@@ -332,4 +333,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         showItems(chosenCategory);
     }
 
+    @Override
+    protected AdView onCreateAd() {
+        return null;
+    }
 }

@@ -94,6 +94,12 @@ public class CartActivity extends BaseActivity {
         startActivity(msgIntent);
     }
 
+    @Override
+    protected AdView onCreateAd() {
+        //TODO
+        return null;
+    }
+
     private static interface ReviewItemListener {
 
         void onClickPutAmount(final View putAmountBtn);

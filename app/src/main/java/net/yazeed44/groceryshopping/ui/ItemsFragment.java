@@ -36,20 +36,24 @@ public class ItemsFragment extends BaseFragment {
 
     protected ArrayList<Item> mItemsArray;
     protected ItemsAdapter mAdapter;
-    private RecyclerView mItemsRecyclerView;
+
+    @InjectView(R.id.items_recycler)
+    RecyclerView mItemsRecyclerView;
     private OnCheckItemListener mListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        init(inflater, container);
+        final View layout = inflater.inflate(R.layout.fragment_items, container, false);
+
+        ButterKnife.inject(this, layout);
+        init();
         setupRecycler();
 
-        return mItemsRecyclerView;
+        return layout;
     }
 
-    private void init(final LayoutInflater inflater, final ViewGroup container) {
+    private void init() {
 
-        mItemsRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_items, container, false);
         mItemsArray = getItems();
         mAdapter = createAdapter();
 
@@ -66,7 +70,7 @@ public class ItemsFragment extends BaseFragment {
     }
 
     protected ArrayList<Item> getItems() {
-        final int categoryIndex = getArguments().getInt(MainActivity.CATEGORY_INDEX_KEY);
+        final int categoryIndex = getArguments().getInt(MainActivity.KEY_CATEGORY_INDEX);
         final Category category = DBUtil.getCategories().get(categoryIndex);
         return category.getItems();
     }
@@ -90,6 +94,11 @@ public class ItemsFragment extends BaseFragment {
 
     public void setListener(final OnCheckItemListener listener) {
         mListener = listener;
+    }
+
+    @Override
+    protected AdView onCreateAdView() {
+        return (AdView) getView().findViewById(R.id.ad_view);
     }
 
     public static interface OnCheckItemListener {
@@ -199,15 +208,15 @@ public class ItemsFragment extends BaseFragment {
             final Item item = mItemsArray.get(position);
             final ItemViewHolder holder = new ItemViewHolder(itemLayout, this);
 
-            final long duration = 400;
+            final long flipDuration = 400;
             if (isAdded(item)) {
                 //removing
                 mListener.onRemoveItem(item);
-                animateRemoving(holder, duration);
+                animateRemoving(holder, flipDuration);
             } else {
                 //adding
                 mListener.onAddItem(item);
-                animateAdding(holder, duration);
+                animateAdding(holder, flipDuration);
             }
 
         }

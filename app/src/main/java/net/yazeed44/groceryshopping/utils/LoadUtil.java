@@ -1,5 +1,9 @@
 package net.yazeed44.groceryshopping.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -33,7 +37,7 @@ public final class LoadUtil {
             final URLConnection connection = openConnection(fileUrl);
             startDownload(outputFile, connection);
             filePath = outputFile.getAbsolutePath();
-            Log.i("downloadDatabase", "Database successfully downloaded " + filePath);
+            Log.i("downloadFile", "File successfully downloaded " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
             filePath = DOWNLOAD_FAILED;
@@ -41,6 +45,39 @@ public final class LoadUtil {
 
         return filePath;
 
+    }
+
+    public static void loadFile(final String fileUrl, final String downloadPath, final OnLoadFileListener listener) {
+
+        new AsyncTask<Void, Void, Void>() {
+
+            String filePath;
+
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                if (new File(downloadPath).exists()) {
+                    filePath = downloadPath;
+                    return null;
+                }
+
+                filePath = downloadFile(fileUrl, downloadPath);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                if (isDownloadedFileValid(filePath)) {
+                    listener.onDownloadedFileSuccessfully(filePath);
+                } else {
+                    listener.onFailedToDownloadFile();
+                }
+
+            }
+        }.execute();
     }
 
     private static File createOrReturnFile(final String path) {
@@ -99,4 +136,17 @@ public final class LoadUtil {
         return true;
 
     }
+
+    public static boolean isNetworkAvailable(final Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static interface OnLoadFileListener {
+        void onDownloadedFileSuccessfully(final String filePath);
+
+        void onFailedToDownloadFile();
+    }
+
 }

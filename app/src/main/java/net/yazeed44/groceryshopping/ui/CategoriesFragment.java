@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 /**
@@ -37,8 +38,8 @@ import butterknife.InjectView;
 public class CategoriesFragment extends BaseFragment {
 
 
-    @InjectView(R.id.categories_list)
-    GridView mCategoriesList;
+    @InjectView(R.id.categories_recycler)
+    RecyclerView mCategoriesRecycler;
     private OnClickCategoryListener mCategoryListener;
     private ArrayList<Category> mCategories = DBUtil.getCategories();
 
@@ -46,7 +47,7 @@ public class CategoriesFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View layout = inflater.inflate(R.layout.fragment_categories, container, false);
         ButterKnife.inject(this, layout);
-        setupAdapter();
+        setupRecycler();
 
         return layout;
     }
@@ -56,9 +57,16 @@ public class CategoriesFragment extends BaseFragment {
         return false;
     }
 
-    private void setupAdapter() {
+    private void setupRecycler() {
+
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.categories_column_num));
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mCategoriesRecycler.setHasFixedSize(true);
+        mCategoriesRecycler.setLayoutManager(gridLayoutManager);
+
         final CategoriesAdapter adapter = new CategoriesAdapter();
-        mCategoriesList.setAdapter(adapter);
+        mCategoriesRecycler.setAdapter(adapter);
 
     }
 
@@ -84,114 +92,114 @@ public class CategoriesFragment extends BaseFragment {
         return false;
     }
 
+    @Override
+    protected AdView onCreateAdView() {
+        return (AdView) getView().findViewById(R.id.ad_view);
+    }
+
     public static interface OnClickCategoryListener {
         void onClickCategory(final Category category);
     }
 
 
-    private class CategoriesAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
-
-        private CategoriesAdapter() {
-            mCategoriesList.setOnItemClickListener(this);
-        }
-
-
-        @Override
-        public int getCount() {
-            return mCategories.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mCategories.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            final Category category = mCategories.get(position);
-
-            final ViewHolder holder;
-            if (convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(R.layout.element_category, parent, false);
-                holder = createHolder(convertView);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            loadCategory(holder, category);
-            setupHeight(convertView);
-
-
-            return convertView;
-        }
-
-
-        private void loadCategory(final ViewHolder holder, final Category category) {
-
-
-            ImageLoader.getInstance().displayImage("drawable://" + category.thumbnailRes, holder.thumbnail);
-
-            holder.title.setTypeface(ViewUtil.getRegularDefaultTypeface());
-            holder.title.setText(category.name);
-
-            final Bitmap photo = category.getCover();
-
-            if (photo != null) {
-                final String id = holder.title.getText().toString();
-                final Context context = holder.thumbnail.getContext();
-
-
-                PaletteLoader.with(context, id)
-                        .load(photo)
-                        .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.BACKGROUND))
-                        .into(holder.bottomBar);
-
-
-                PaletteLoader.with(context, id)
-                        .load(photo)
-                        .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.TEXT_TITLE))
-                        .into(holder.title);
-            }
-        }
-
-        private void setupHeight(final View convertView) {
-            final int height = getResources().getDimensionPixelSize(R.dimen.category_height);
-
-            convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
-        }
-
-
-        private ViewHolder createHolder(final View convertView) {
-            final ViewHolder holder = new ViewHolder();
-            holder.thumbnail = (ImageView) convertView.findViewById(R.id.category_thumbnail);
-            holder.title = (TextView) convertView.findViewById(R.id.category_bottom_title);
-            holder.bottomBar = (FrameLayout) convertView.findViewById(R.id.category_bottom_bar);
-            return holder;
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            if (mCategoryListener != null) {
-                mCategoryListener.onClickCategory(mCategories.get(position));
-            } else {
-                Log.w("onCategoryClick", "Category listener is null");
-            }
-        }
-
-
-        private class ViewHolder {
-            private ImageView thumbnail;
-            private TextView title;
-            private FrameLayout bottomBar;
-        }
+    private interface CategoryListener {
+        void onClickCategory(View layout);
     }
 
+     class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> implements CategoryListener {
+
+
+         @Override
+         public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+             final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_category, parent, false);
+             return new CategoryViewHolder(itemView, this);
+         }
+
+         @Override
+         public void onBindViewHolder(CategoryViewHolder holder, int position) {
+             final Category category = mCategories.get(position);
+
+             loadCategory(holder, category);
+
+         }
+
+         @Override
+         public int getItemCount() {
+             return mCategories.size();
+         }
+
+
+         private void loadCategory(final CategoryViewHolder holder, final Category category) {
+
+
+             ImageLoader.getInstance().displayImage("drawable://" + category.thumbnailRes, holder.thumbnail);
+
+             holder.title.setTypeface(ViewUtil.getRegularDefaultTypeface());
+             holder.title.setText(category.name);
+
+             final Bitmap photo = category.getThumbnail();
+
+             if (photo != null) {
+                 final String id = holder.title.getText().toString();
+                 final Context context = holder.thumbnail.getContext();
+
+
+                 PaletteLoader.with(context, id)
+                         .load(photo)
+                         .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.BACKGROUND))
+                         .into(holder.bottomBar);
+
+
+                 PaletteLoader.with(context, id)
+                         .load(photo)
+                         .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.TEXT_TITLE))
+                         .into(holder.title);
+             }
+        }
+
+         private void setupHeight(final View convertView) {
+             final int height = getResources().getDimensionPixelSize(R.dimen.category_height);
+
+             convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+         }
+
+
+         @Override
+         public void onClickCategory(View layout) {
+
+             final int position = ViewUtil.getPositionOfChild(layout, R.id.category_layout, mCategoriesRecycler);
+
+             if (mCategoryListener != null) {
+                 mCategoryListener.onClickCategory(mCategories.get(position));
+             } else {
+                 Log.w("onCategoryClick", "Category listener is null");
+             }
+         }
+     }
+
+    class CategoryViewHolder extends RecyclerView.ViewHolder {
+
+        @InjectView(R.id.category_thumbnail)
+        ImageView thumbnail;
+        @InjectView(R.id.category_bottom_title)
+        TextView title;
+        @InjectView(R.id.category_bottom_bar)
+        FrameLayout bottomBar;
+
+        private CategoryListener listener;
+
+        public CategoryViewHolder(View itemView, CategoryListener listener) {
+            super(itemView);
+            this.listener = listener;
+
+            ButterKnife.inject(this, itemView);
+        }
+
+        @OnClick(R.id.category_layout)
+        public void onClickLayout(View itemView) {
+            listener.onClickCategory(itemView);
+        }
+
+    }
 
 }

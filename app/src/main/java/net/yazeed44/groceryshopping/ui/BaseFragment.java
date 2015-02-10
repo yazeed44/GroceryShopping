@@ -9,7 +9,7 @@ import android.view.View;
 /**
  * Created by yazeed44 on 1/18/15.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -20,6 +20,12 @@ public class BaseFragment extends Fragment {
             ((MainActivity) getActivity()).hideSearchView();
         } else {
             ((MainActivity) getActivity()).showSearchView();
+        }
+
+        final AdView adView = onCreateAdView();
+
+        if (adView != null) {
+            adView.loadAd();
         }
 
 
@@ -33,4 +39,6 @@ public class BaseFragment extends Fragment {
     protected boolean shouldHideSearchView() {
         return true;
     }
+
+    protected abstract AdView onCreateAdView();
 }
