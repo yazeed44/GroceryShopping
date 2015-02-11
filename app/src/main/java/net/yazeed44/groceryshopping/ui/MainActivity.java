@@ -18,9 +18,12 @@ import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.BlinkAnimation;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
 
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.utils.Category;
+import net.yazeed44.groceryshopping.utils.CheckForDbUpdatesRequest;
 import net.yazeed44.groceryshopping.utils.DBUtil;
 import net.yazeed44.groceryshopping.utils.Item;
 import net.yazeed44.groceryshopping.utils.ViewUtil;
@@ -31,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class MainActivity extends BaseActivity implements CategoriesFragment.OnClickCategoryListener, ItemsFragment.OnCheckItemListener {
+public class MainActivity extends BaseActivity implements CategoriesFragment.OnClickCategoryListener, ItemsFragment.OnCheckItemListener, DBUtil.OnInstallingDbListener {
 
 
     public static final String KEY_CATEGORY_INDEX = "categoryIndexKey";
@@ -60,6 +63,11 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
 
         initUtils();
+
+        if (savedInstanceState == null) {
+            launchCheckDb();
+        }
+
         showCategories(savedInstanceState);
 
 
@@ -67,7 +75,6 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
 
     }
-
 
     private void initUtils() {
 
@@ -77,6 +84,68 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         DBUtil.initInstance(this);
 
     }
+
+    private void launchCheckDb() {
+
+        final CheckForDbUpdatesRequest checkRequest = new CheckForDbUpdatesRequest(this);
+        spiceManager.execute(checkRequest, new RequestListener<CheckForDbUpdatesRequest.Result>() {
+            @Override
+            public void onRequestFailure(SpiceException spiceException) {
+                //TODO Handle exception
+
+
+                Log.e("CheckForDbUpdate", spiceException.getMessage());
+
+            }
+
+            @Override
+            public void onRequestSuccess(CheckForDbUpdatesRequest.Result result) {
+
+                Log.i("CheckForDBUpdate", "Result is  " + result.toString());
+
+                switch (result) {
+                    case NEW_UPDATE:
+                        showUpdateDialog();
+                        break;
+                    case NO_DB:
+                        DBUtil.installNewDb(MainActivity.this, MainActivity.this);
+                        break;
+
+                    case NO_NEW_UPDATE:
+                        break;
+
+                }
+
+            }
+        });
+    }
+
+    private void showUpdateDialog() {
+        ViewUtil.createDialog(this)
+                .negativeText(R.string.neg_btn_update_dialog)
+                .content(R.string.content_new_update)
+                .title(R.string.title_new_update)
+                .positiveText(R.string.pos_btn_update_dialog)
+
+                .callback(new MaterialDialog.ButtonCallback() {
+
+                              @Override
+                              public void onNegative(MaterialDialog materialDialog) {
+                                  materialDialog.dismiss();
+                              }
+
+                              @Override
+                              public void onPositive(MaterialDialog materialDialog) {
+                                  materialDialog.dismiss();
+                                  DBUtil.installNewDb(MainActivity.this, MainActivity.this);
+
+
+                              }
+                          }
+                ).show();
+
+    }
+
 
     private void showCategories(final Bundle bundle) {
 
@@ -93,6 +162,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
 
     }
+
 
     private void showSearchFragment() {
         //TODO Add animations
@@ -336,5 +406,12 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     @Override
     protected AdView onCreateAd() {
         return null;
+    }
+
+
+    @Override
+    public void onDbInstalledSuccessful(MainActivity activity) {
+        ViewUtil.toastShort(this, R.string.toast_db_installed_successfully);
+
     }
 }

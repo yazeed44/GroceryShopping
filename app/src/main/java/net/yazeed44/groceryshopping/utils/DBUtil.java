@@ -8,10 +8,16 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
+
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.database.ItemsDB;
 import net.yazeed44.groceryshopping.database.ItemsDBHelper;
 import net.yazeed44.groceryshopping.ui.AdView;
+import net.yazeed44.groceryshopping.ui.BaseActivity;
+import net.yazeed44.groceryshopping.ui.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,9 +58,6 @@ public final class DBUtil {
         getCategories();//Initialize
 
         ItemsDB.initInstance(ItemsDBHelper.createInstance(mActivity));
-
-
-        new CheckDBTask(activity).execute();
 
 
     }
@@ -175,7 +178,7 @@ public final class DBUtil {
                 final Ad ad = fetchAd(AD_TXT_DOWNLOAD_PATH);
 
                 if (ad != null) {
-                    Log.i(AdView.TAG, "Got Ad without need to download it");
+                    Log.i(AdView.TAG, "Got Offline AD");
                     mAd = ad;
                     return null;
                 }
@@ -217,7 +220,7 @@ public final class DBUtil {
 
     private static Ad fetchAd(final String adTxtPath) {
 
-        if (!fileExists(adTxtPath)) {
+        if (!LoadUtil.fileExists(adTxtPath)) {
             return null;
         }
 
@@ -228,7 +231,7 @@ public final class DBUtil {
             final BufferedReader adFileReader = new BufferedReader(new FileReader(adTxtPath));
             ad = new Ad(adFileReader.readLine(), adFileReader.readLine()); //The reader moves from line to line
 
-            if (fileExists(DBUtil.AD_PDF_PATH) && fileExists(DBUtil.AD_IMAGE_PATH)) {
+            if (LoadUtil.fileExists(DBUtil.AD_PDF_PATH) && LoadUtil.fileExists(DBUtil.AD_IMAGE_PATH)) {
                 Log.i(AdView.TAG, "Got ad image and pdf offline");
                 ad.setImagePath(AD_IMAGE_PATH);
                 ad.setPdfPath(AD_PDF_PATH);
@@ -249,22 +252,95 @@ public final class DBUtil {
 
     }
 
-    public static boolean fileExists(final String path) {
-        return new File(path).exists();
-    }
-
-    public static void forceDownloadNewDb(final Context context, final CheckDBTask.OnInstallingDb listener) {
+    public static void installNewDb(final Context context, final OnInstallingDbListener listener) {
 
 
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new CheckDBTask(context, listener).execute(CheckDBTask.DatabaseAction.INSTALL_NEW_ONE);
+
+                final android.app.ProgressDialog progressDialog = createDbLoadingDialog(context);
+                progressDialog.show();
+                final InstallDbRequest installRequest = new InstallDbRequest(context);
+
+                ((BaseActivity) mActivity).spiceManager.execute(installRequest, new RequestListener<InstallDbRequest.InstallingResult>() {
+                    @Override
+                    public void onRequestFailure(SpiceException spiceException) {
+
+                       /* progressDialog.hide();
+                        if (spiceException instanceof NoNetworkException){
+                            showNoNetworkDialog(context,listener);
+                            Log.e("installDb",spiceException.getMessage());
+
+                        }*/
+
+                    }
+
+                    @Override
+                    public void onRequestSuccess(InstallDbRequest.InstallingResult result) {
+                        progressDialog.hide();
+
+                        switch (result) {
+                            case NO_PROBLEM:
+                                listener.onDbInstalledSuccessful((MainActivity) mActivity);
+                                break;
+
+
+                            case ERROR_NO_NETWORK:
+                                showNoNetworkDialog(context, listener);
+                                break;
+                        }
+
+                    }
+                });
 
             }
 
         });
 
+    }
+
+    private static android.app.ProgressDialog createDbLoadingDialog(final Context context) {
+        final android.app.ProgressDialog dialog = new android.app.ProgressDialog(context);
+        dialog.setTitle(R.string.title_loading_db);
+        dialog.setMessage(context.getResources().getString(R.string.content_loading_db));
+        dialog.setCancelable(false);
+        dialog.setProgressStyle(R.attr.progressBarStyle);
+
+        return dialog;
+    }
+
+
+    private static void showNoNetworkDialog(final Context context, final OnInstallingDbListener listener) {
+
+        Log.w("NoNetwork", "Failed to download db ");
+
+        ViewUtil.createDialog(context)
+                .iconRes(android.R.drawable.stat_notify_error)
+                .content(R.string.title_error_no_network)
+                .positiveText(R.string.pos_btn_error_no_network)
+                .cancelable(false)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+
+                        if (LoadUtil.isNetworkAvailable(context)) {
+                            installNewDb(context, listener);
+
+                        } else {
+                            ViewUtil.toastShort(context, R.string.toast_error_no_network);
+                            showNoNetworkDialog(context, listener);
+                        }
+                    }
+                })
+                .show();
+
+    }
+
+
+    public static interface OnInstallingDbListener {
+        void onDbInstalledSuccessful(final MainActivity activity);
     }
 
     public static interface OnAdLoadingListener {

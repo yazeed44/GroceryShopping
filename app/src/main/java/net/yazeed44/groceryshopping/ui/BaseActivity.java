@@ -1,6 +1,11 @@
 package net.yazeed44.groceryshopping.ui;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+
+import com.octo.android.robospice.SpiceManager;
+
+import net.yazeed44.groceryshopping.utils.OfflineSpiceService;
 
 /**
  * Created by yazeed44 on 1/16/15.
@@ -8,7 +13,26 @@ import android.support.v7.app.ActionBarActivity;
 public abstract class BaseActivity extends ActionBarActivity {
 
 
+    public SpiceManager spiceManager;
     protected AdView mAdView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        spiceManager = onCreateSpiceManager();
+    }
+
+    @Override
+    protected void onStart() {
+        spiceManager.start(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        spiceManager.shouldStop();
+        super.onStop();
+    }
 
     @Override
     protected void onResume() {
@@ -26,6 +50,10 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     protected abstract AdView onCreateAd();
+
+    protected SpiceManager onCreateSpiceManager() {
+        return new SpiceManager(OfflineSpiceService.class);
+    }
 
 
 }

@@ -24,6 +24,11 @@
 
         <activity android:name=".ui.CartActivity" />
         <activity android:name=".ui.ItemsMsgActivity" />
+
+
+        <service
+            android:name=".utils.OfflineSpiceService"
+            android:exported="false" />
     </application>
 
 </manifest>

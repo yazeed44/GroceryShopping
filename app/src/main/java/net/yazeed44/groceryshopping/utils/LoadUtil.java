@@ -31,7 +31,12 @@ public final class LoadUtil {
 
         String filePath;
 
+        if (fileExists(downloadPath)) {
+            return downloadPath;
+        }
+
         final File outputFile = createOrReturnFile(downloadPath);
+
 
         try {
             final URLConnection connection = openConnection(fileUrl);
@@ -45,39 +50,6 @@ public final class LoadUtil {
 
         return filePath;
 
-    }
-
-    public static void loadFile(final String fileUrl, final String downloadPath, final OnLoadFileListener listener) {
-
-        new AsyncTask<Void, Void, Void>() {
-
-            String filePath;
-
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                if (new File(downloadPath).exists()) {
-                    filePath = downloadPath;
-                    return null;
-                }
-
-                filePath = downloadFile(fileUrl, downloadPath);
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                if (isDownloadedFileValid(filePath)) {
-                    listener.onDownloadedFileSuccessfully(filePath);
-                } else {
-                    listener.onFailedToDownloadFile();
-                }
-
-            }
-        }.execute();
     }
 
     private static File createOrReturnFile(final String path) {
@@ -126,6 +98,46 @@ public final class LoadUtil {
 
     }
 
+
+    public static void loadFile(final String fileUrl, final String downloadPath, final OnLoadFileListener listener) {
+
+        new AsyncTask<Void, Void, Void>() {
+
+            String filePath;
+
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                if (new File(downloadPath).exists()) {
+                    filePath = downloadPath;
+                    return null;
+                }
+
+                filePath = downloadFile(fileUrl, downloadPath);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                if (isDownloadedFileValid(filePath)) {
+                    listener.onDownloadedFileSuccessfully(filePath);
+                } else {
+                    listener.onFailedToDownloadFile();
+                }
+
+            }
+        }.execute();
+    }
+
+
+
+
+
+
+
     public static boolean isDownloadedFileValid(final String filePath) {
 
         if (TextUtils.isEmpty(filePath) || DOWNLOAD_FAILED.equals(filePath)) {
@@ -141,6 +153,10 @@ public final class LoadUtil {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static boolean fileExists(final String path) {
+        return new File(path).exists();
     }
 
     public static interface OnLoadFileListener {

@@ -8,7 +8,6 @@ import android.util.Log;
 
 import net.yazeed44.groceryshopping.ui.MainActivity;
 import net.yazeed44.groceryshopping.utils.Category;
-import net.yazeed44.groceryshopping.utils.CheckDBTask;
 import net.yazeed44.groceryshopping.utils.DBUtil;
 import net.yazeed44.groceryshopping.utils.Item;
 
@@ -71,12 +70,13 @@ public class ItemsDB {
         try {
             mItemsCursor = mDB.rawQuery("SELECT * FROM " + category.tableName, null);
         } catch (SQLiteException ex) {
-            DBUtil.forceDownloadNewDb(mHelper.context, new CheckDBTask.OnInstallingDb() {
+            DBUtil.installNewDb(mHelper.context, new DBUtil.OnInstallingDbListener() {
                 @Override
-                public void onInstallSuccessful(final MainActivity activity) {
+                public void onDbInstalledSuccessful(MainActivity activity) {
                     activity.updateItemsFragment(category);
                 }
             });
+
 
         }
 
