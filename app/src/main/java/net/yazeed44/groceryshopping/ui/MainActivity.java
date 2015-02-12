@@ -399,8 +399,12 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     }
 
     public void updateItemsFragment(final Category chosenCategory) {
-        getSupportFragmentManager().beginTransaction().remove(mItemsFragment).commit();
-        showItems(chosenCategory);
+
+        //TODO Fix "Fragment is already active"
+        getSupportFragmentManager().beginTransaction().detach(mItemsFragment)
+                .attach(mItemsFragment)
+                .commit();
+        mItemsFragment.setCurrentPage(chosenCategory);
     }
 
     @Override

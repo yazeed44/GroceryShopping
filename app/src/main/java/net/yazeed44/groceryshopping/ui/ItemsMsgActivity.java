@@ -46,8 +46,12 @@ public class ItemsMsgActivity extends BaseActivity {
     RecyclerView mCategoriesRecycler;
     @InjectView(R.id.share_apps_recycler)
     RecyclerView mShareAppsRecycler;
+
+    @InjectView(R.id.items_msg_note_txt_view)
+    TextView mNoteTxt;
+
     private int mNoteCount = 1;
-    private ItemsMsgOrganizer mItemsOrganized;
+    private ItemsMsgOrganizer mItemsOrganizer;
 
     private Intent mShareIntent;
 
@@ -74,6 +78,14 @@ public class ItemsMsgActivity extends BaseActivity {
 
     }
 
+    private void updateShareIntent() {
+
+        mNoteTxt.setVisibility(View.VISIBLE);
+        mShareIntent.putExtra(Intent.EXTRA_TEXT, getShareTxt());
+        setupShareAppsAdapter();
+    }
+
+
     private void setupCategoriesItemsRecycler() {
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.categories_items_msg_column_num));
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -81,9 +93,9 @@ public class ItemsMsgActivity extends BaseActivity {
         mCategoriesRecycler.setLayoutManager(gridLayoutManager);
 
 
-        mItemsOrganized = ItemsMsgOrganizer.from(MainActivity.CHOSEN_ITEMS);
+        mItemsOrganizer = ItemsMsgOrganizer.from(MainActivity.CHOSEN_ITEMS);
 
-        final List<ItemsMsgOrganizer.ItemsOrganized> itemsOrganized = mItemsOrganized.organize();
+        final List<ItemsMsgOrganizer.ItemsOrganized> itemsOrganized = mItemsOrganizer.organize();
         mCategoriesRecycler.setAdapter(new CategoriesItemsAdapter(itemsOrganized));
 
     }
@@ -159,7 +171,7 @@ public class ItemsMsgActivity extends BaseActivity {
 
         final String shareAppTxt = getResources().getString(R.string.msg_shared_by) + " " + getResources().getString(R.string.app_name) + "\n" + APP_PLAY_STORE_URL;
 
-        return "\n" + mItemsOrganized.getText() + shareAppTxt;
+        return "\n" + mItemsOrganizer.getText() + "\n" + mNoteTxt.getText() + "\n" + shareAppTxt;
     }
 
     private java.util.List<ResolveInfo> getNativeAppsToShare() {
@@ -206,16 +218,15 @@ public class ItemsMsgActivity extends BaseActivity {
                     public void onPositive(MaterialDialog dialog) {
                         super.onPositive(dialog);
                         final CharSequence noteTxt = noteString + " " + mNoteCount++ + " : " + typeNoteTxt.getText() + Html.fromHtml("<br/>");
-                        //TODO
-                        // mMsgTxt.append(noteTxt);
-                        setupShareAppsAdapter();
+                        mNoteTxt.append(noteTxt);
+                        updateShareIntent();
                     }
                 }).build();
     }
 
     @Override
     protected AdView onCreateAd() {
-        //TODO
+        //TODO Implement Ad
         return null;
     }
 

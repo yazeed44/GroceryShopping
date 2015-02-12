@@ -249,7 +249,6 @@ public final class DBUtil {
         return ad;
 
 
-
     }
 
     public static void installNewDb(final Context context, final OnInstallingDbListener listener) {
@@ -266,13 +265,6 @@ public final class DBUtil {
                 ((BaseActivity) mActivity).spiceManager.execute(installRequest, new RequestListener<InstallDbRequest.InstallingResult>() {
                     @Override
                     public void onRequestFailure(SpiceException spiceException) {
-
-                       /* progressDialog.hide();
-                        if (spiceException instanceof NoNetworkException){
-                            showNoNetworkDialog(context,listener);
-                            Log.e("installDb",spiceException.getMessage());
-
-                        }*/
 
                     }
 
@@ -327,6 +319,7 @@ public final class DBUtil {
 
                         if (LoadUtil.isNetworkAvailable(context)) {
                             installNewDb(context, listener);
+                            dialog.dismiss();
 
                         } else {
                             ViewUtil.toastShort(context, R.string.toast_error_no_network);

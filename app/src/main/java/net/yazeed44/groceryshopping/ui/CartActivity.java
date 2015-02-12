@@ -96,7 +96,7 @@ public class CartActivity extends BaseActivity {
 
     @Override
     protected AdView onCreateAd() {
-        //TODO
+        //TODO Implement Ad
         return null;
     }
 

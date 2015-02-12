@@ -22,7 +22,7 @@ import java.io.File;
 
 /**
  * Created by yazeed44 on 2/4/15.
- * //TODO Change pdf downloading method
+ *
  */
 public class AdView extends ImageView implements View.OnClickListener, DBUtil.OnAdLoadingListener {
 
@@ -68,7 +68,7 @@ public class AdView extends ImageView implements View.OnClickListener, DBUtil.On
         try {
             getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            //TODO handle exception
+            //TODO handle exception for not finding proper pdf reader
             // Instruct the user to install a PDF reader here, or something
         }
 

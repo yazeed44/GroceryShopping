@@ -70,6 +70,11 @@ public class ItemsTabsFragment extends BaseFragment {
 
     }
 
+    public void setCurrentPage(final Category currentCategory) {
+        final int index = DBUtil.getCategories().indexOf(currentCategory);
+        mItemsPager.setCurrentItem(index);
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
