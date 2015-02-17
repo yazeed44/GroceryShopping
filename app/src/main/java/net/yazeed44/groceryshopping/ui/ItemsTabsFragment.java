@@ -90,6 +90,11 @@ public class ItemsTabsFragment extends BaseFragment {
         return null;
     }
 
+    @Override
+    protected void attachAdView(AdView adView) {
+
+    }
+
     private class ItemsPagerAdapter extends FragmentPagerAdapter {
         public ItemsPagerAdapter(FragmentManager fm) {
             super(fm);

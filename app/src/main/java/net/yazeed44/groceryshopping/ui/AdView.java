@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -78,6 +79,10 @@ public class AdView extends ImageView implements View.OnClickListener, DBUtil.On
 
         DBUtil.loadAd(this);
 
+    }
+
+    public void attachToRecyclerView(final RecyclerView recyclerView) {
+        //TODO
 
     }
 
@@ -91,38 +96,12 @@ public class AdView extends ImageView implements View.OnClickListener, DBUtil.On
         mAd = ad;
 
         if (!adImageExistsInStorage()) {
-            Log.i(TAG, "Ad image dosen't exist   Downloading...");
-            deleteImageFile();
-            LoadUtil.loadFile(mAd.imageUrl, DBUtil.AD_IMAGE_PATH, new LoadUtil.OnLoadFileListener() {
-                @Override
-                public void onDownloadedFileSuccessfully(String filePath) {
-                    displayAdImage();
-                }
-
-                @Override
-                public void onFailedToDownloadFile() {
-                    Log.e(TAG, "Failed to download image");
-                    hide();
-                }
-            });
+            downloadAdImage();
 
         }
 
         if (!adPdfExistsInStorage()) {
-            Log.i(TAG, "Ad Pdf dosen't exist   Downloading...");
-            deletePdfFile();
-            LoadUtil.loadFile(mAd.pdfUrl, DBUtil.AD_PDF_PATH, new LoadUtil.OnLoadFileListener() {
-                @Override
-                public void onDownloadedFileSuccessfully(String filePath) {
-                    mPdfPath = filePath;
-                }
-
-                @Override
-                public void onFailedToDownloadFile() {
-                    //TODO Handle failed to download pdf
-                    Log.e(TAG, "Failed to download ad pdf");
-                }
-            });
+            downloadAdPdf();
         }
 
         Log.i(TAG, "Ad pdf and image exists");
@@ -130,6 +109,40 @@ public class AdView extends ImageView implements View.OnClickListener, DBUtil.On
         mPdfPath = ad.getPdfPath();
         displayAdImage();
 
+    }
+
+    private void downloadAdImage() {
+        Log.i(TAG, "Ad image dosen't exist   Downloading...");
+        deleteImageFile();
+        LoadUtil.loadFile(mAd.imageUrl, DBUtil.AD_IMAGE_DIR, new LoadUtil.OnLoadFileListener() {
+            @Override
+            public void onDownloadedFileSuccessfully(String filePath) {
+                displayAdImage();
+            }
+
+            @Override
+            public void onFailedToDownloadFile() {
+                Log.e(TAG, "Failed to download image");
+                hide();
+            }
+        });
+    }
+
+    private void downloadAdPdf() {
+        Log.i(TAG, "Ad Pdf dosen't exist   Downloading...");
+        deletePdfFile();
+        LoadUtil.loadFile(mAd.pdfUrl, DBUtil.AD_PDF_DIR, new LoadUtil.OnLoadFileListener() {
+            @Override
+            public void onDownloadedFileSuccessfully(String filePath) {
+                mPdfPath = filePath;
+            }
+
+            @Override
+            public void onFailedToDownloadFile() {
+                //TODO Handle failed to download pdf
+                Log.e(TAG, "Failed to download ad pdf");
+            }
+        });
     }
 
     private void hide() {
@@ -143,23 +156,23 @@ public class AdView extends ImageView implements View.OnClickListener, DBUtil.On
 
     private boolean adImageExistsInStorage() {
 
-        final File imageFile = new File(DBUtil.AD_IMAGE_PATH);
+        final File imageFile = new File(DBUtil.AD_IMAGE_DIR);
 
         return imageFile.exists();
     }
 
     private void deleteImageFile() {
-        new File(DBUtil.AD_IMAGE_PATH).delete();
+        new File(DBUtil.AD_IMAGE_DIR).delete();
     }
 
     private boolean adPdfExistsInStorage() {
 
-        final File pdfFile = new File(DBUtil.AD_PDF_PATH);
+        final File pdfFile = new File(DBUtil.AD_PDF_DIR);
         return pdfFile.exists();
     }
 
     private void deletePdfFile() {
-        new File(DBUtil.AD_PDF_PATH).delete();
+        new File(DBUtil.AD_PDF_DIR).delete();
     }
 
 

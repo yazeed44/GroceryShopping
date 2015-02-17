@@ -26,6 +26,7 @@ public abstract class BaseFragment extends Fragment {
 
         if (adView != null) {
             adView.loadAd();
+            attachAdView(adView);
         }
 
 
@@ -41,4 +42,6 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected abstract AdView onCreateAdView();
+
+    protected abstract void attachAdView(final AdView adView);
 }

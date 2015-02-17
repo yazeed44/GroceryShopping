@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,6 +96,11 @@ public class CategoriesFragment extends BaseFragment {
         return (AdView) getView().findViewById(R.id.ad_view);
     }
 
+    @Override
+    protected void attachAdView(AdView adView) {
+        adView.attachToRecyclerView(mCategoriesRecycler);
+    }
+
     public static interface OnClickCategoryListener {
         void onClickCategory(final Category category);
     }
@@ -106,76 +110,69 @@ public class CategoriesFragment extends BaseFragment {
         void onClickCategory(View layout);
     }
 
-     class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> implements CategoryListener {
+    class CategoriesAdapter extends RecyclerView.Adapter<CategoryViewHolder> implements CategoryListener {
 
 
-         @Override
-         public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-             final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_category, parent, false);
-             return new CategoryViewHolder(itemView, this);
-         }
-
-         @Override
-         public void onBindViewHolder(CategoryViewHolder holder, int position) {
-             final Category category = mCategories.get(position);
-
-             loadCategory(holder, category);
-
-         }
-
-         @Override
-         public int getItemCount() {
-             return mCategories.size();
-         }
-
-
-         private void loadCategory(final CategoryViewHolder holder, final Category category) {
-
-
-             ImageLoader.getInstance().displayImage("drawable://" + category.thumbnailRes, holder.thumbnail);
-
-             holder.title.setTypeface(ViewUtil.getRegularDefaultTypeface());
-             holder.title.setText(category.name);
-
-             final Bitmap photo = category.getThumbnail();
-
-             if (photo != null) {
-                 final String id = holder.title.getText().toString();
-                 final Context context = holder.thumbnail.getContext();
-
-
-                 PaletteLoader.with(context, id)
-                         .load(photo)
-                         .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.BACKGROUND))
-                         .into(holder.bottomBar);
-
-
-                 PaletteLoader.with(context, id)
-                         .load(photo)
-                         .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.TEXT_TITLE))
-                         .into(holder.title);
-             }
+        @Override
+        public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_category, parent, false);
+            return new CategoryViewHolder(itemView, this);
         }
 
-         private void setupHeight(final View convertView) {
-             final int height = getResources().getDimensionPixelSize(R.dimen.category_height);
+        @Override
+        public void onBindViewHolder(CategoryViewHolder holder, int position) {
+            final Category category = mCategories.get(position);
 
-             convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
-         }
+            loadCategory(holder, category);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mCategories.size();
+        }
 
 
-         @Override
-         public void onClickCategory(View layout) {
+        private void loadCategory(final CategoryViewHolder holder, final Category category) {
 
-             final int position = ViewUtil.getPositionOfChild(layout, R.id.category_layout, mCategoriesRecycler);
 
-             if (mCategoryListener != null) {
-                 mCategoryListener.onClickCategory(mCategories.get(position));
-             } else {
-                 Log.w("onCategoryClick", "Category listener is null");
-             }
-         }
-     }
+            ImageLoader.getInstance().displayImage("drawable://" + category.thumbnailRes, holder.thumbnail);
+
+            holder.title.setTypeface(ViewUtil.getRegularDefaultTypeface());
+            holder.title.setText(category.name);
+
+            final Bitmap photo = category.getThumbnail();
+
+            if (photo != null) {
+                final String id = holder.title.getText().toString();
+                final Context context = holder.thumbnail.getContext();
+
+
+                PaletteLoader.with(context, id)
+                        .load(photo)
+                        .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.BACKGROUND))
+                        .into(holder.bottomBar);
+
+
+                PaletteLoader.with(context, id)
+                        .load(photo)
+                        .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.TEXT_TITLE))
+                        .into(holder.title);
+            }
+        }
+
+        @Override
+        public void onClickCategory(View layout) {
+
+            final int position = ViewUtil.getPositionOfChild(layout, R.id.category_layout, mCategoriesRecycler);
+
+            if (mCategoryListener != null) {
+                mCategoryListener.onClickCategory(mCategories.get(position));
+            } else {
+                Log.w("onCategoryClick", "Category listener is null");
+            }
+        }
+    }
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
 

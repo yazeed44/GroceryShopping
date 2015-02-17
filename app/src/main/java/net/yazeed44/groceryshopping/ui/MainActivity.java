@@ -23,6 +23,7 @@ import com.octo.android.robospice.request.listener.RequestListener;
 
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.utils.Category;
+import net.yazeed44.groceryshopping.utils.CheckForAdUpdatesRequest;
 import net.yazeed44.groceryshopping.utils.CheckForDbUpdatesRequest;
 import net.yazeed44.groceryshopping.utils.DBUtil;
 import net.yazeed44.groceryshopping.utils.Item;
@@ -65,7 +66,8 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         initUtils();
 
         if (savedInstanceState == null) {
-            launchCheckDb();
+            launchCheckDbUpdate();
+            launchCheckAdUpdate();
         }
 
         showCategories(savedInstanceState);
@@ -76,6 +78,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
     }
 
+
     private void initUtils() {
 
         ViewUtil.init(this);
@@ -85,14 +88,13 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
     }
 
-    private void launchCheckDb() {
+    private void launchCheckDbUpdate() {
 
         final CheckForDbUpdatesRequest checkRequest = new CheckForDbUpdatesRequest(this);
         spiceManager.execute(checkRequest, new RequestListener<CheckForDbUpdatesRequest.Result>() {
             @Override
             public void onRequestFailure(SpiceException spiceException) {
                 //TODO Handle exception
-
 
                 Log.e("CheckForDbUpdate", spiceException.getMessage());
 
@@ -119,6 +121,35 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             }
         });
     }
+
+    private void launchCheckAdUpdate() {
+        final CheckForAdUpdatesRequest checkRequest = new CheckForAdUpdatesRequest(this);
+        spiceManager.execute(checkRequest, new RequestListener<CheckForAdUpdatesRequest.Result>() {
+            @Override
+            public void onRequestFailure(SpiceException spiceException) {
+
+            }
+
+            @Override
+            public void onRequestSuccess(CheckForAdUpdatesRequest.Result result) {
+                Log.i(CheckForAdUpdatesRequest.TAG, "Result is  " + result);
+
+                switch (result) {
+
+                    case NEW_UPDATE:
+                        DBUtil.updateAd();
+                        onResume();
+                        break;
+
+                    case NO_NEW_UPDATE:
+                        break;
+                }
+
+            }
+        });
+
+    }
+
 
     private void showUpdateDialog() {
         ViewUtil.createDialog(this)

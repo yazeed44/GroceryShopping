@@ -16,24 +16,22 @@ public class ShareApp {
     public final Drawable icon;
     public CharSequence appLabel;
     private ActivityInfo mActivityInfo;
-    private CharSequence mText;
     private AppClickListener mListener;
 
     private ShareApp(final Builder builder) {
         mActivityInfo = builder.mActivityInfo;
-        mText = builder.mText;
         appLabel = builder.mAppLabel;
         icon = builder.mIcon;
         mListener = builder.listener;
     }
 
     public void onClickApp(final Context context) {
-        mListener.onClickApp(context, mActivityInfo, mText);
+        mListener.onClickApp(context, mActivityInfo);
     }
 
 
     public static interface AppClickListener {
-        void onClickApp(final Context context, final ActivityInfo activityInfo, final CharSequence text);
+        void onClickApp(final Context context, final ActivityInfo activityInfo);
     }
 
     public static class Builder {
@@ -45,7 +43,7 @@ public class ShareApp {
 
         private AppClickListener listener = new AppClickListener() {
             @Override
-            public void onClickApp(Context context, ActivityInfo activityInfo, CharSequence text) {
+            public void onClickApp(Context context, ActivityInfo activityInfo) {
 
                 mIntent.setComponent(new ComponentName(activityInfo.packageName, activityInfo.name));
 
@@ -53,7 +51,6 @@ public class ShareApp {
                 context.startActivity(mIntent);
             }
         };
-        private CharSequence mText;
 
 
         public Builder(final CharSequence label) {

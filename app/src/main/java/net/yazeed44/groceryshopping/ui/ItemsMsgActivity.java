@@ -146,7 +146,7 @@ public class ItemsMsgActivity extends BaseActivity {
                 .setIntent(mShareIntent)
                 .setOnClickListener(new ShareApp.AppClickListener() {
                     @Override
-                    public void onClickApp(Context context, ActivityInfo activityInfo, final CharSequence text) {
+                    public void onClickApp(Context context, ActivityInfo activityInfo) {
                         copyMsgToClipboard(getShareTxt().toString());
                     }
                 }).build();

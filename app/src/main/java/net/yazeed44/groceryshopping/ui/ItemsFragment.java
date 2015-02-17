@@ -101,6 +101,12 @@ public class ItemsFragment extends BaseFragment {
         return (AdView) getView().findViewById(R.id.ad_view);
     }
 
+    @Override
+    protected void attachAdView(AdView adView) {
+        adView.attachToRecyclerView(mItemsRecyclerView);
+
+    }
+
     public static interface OnCheckItemListener {
         void onAddItem(final Item item);
 

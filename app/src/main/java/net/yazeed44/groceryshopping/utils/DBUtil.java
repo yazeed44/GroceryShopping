@@ -35,13 +35,16 @@ public final class DBUtil {
 
     public static final String AD_TXT_DOWNLOAD_URL = "https://www.dropbox.com/s/expf2eaqdktser8/AdTest.txt?dl=1";
     public static final String AD_TXT_FILE_NAME = "Ad.txt";
-    public static final String AD_TXT_DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_TXT_FILE_NAME;
+    public static final String AD_TXT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_TXT_FILE_NAME;
+
+    public static final String AD_TXT_COPY_FILE_NAME = "Ad_copy.txt";
+    public static final String AD_TXT_COPY_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_TXT_COPY_FILE_NAME;
 
     public static final String AD_IMAGE_FILE_NAME = "Ad-image.png";
-    public static final String AD_IMAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_IMAGE_FILE_NAME;
+    public static final String AD_IMAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_IMAGE_FILE_NAME;
 
     public static final String AD_PDF_FILE_NAME = "Ad-pdf.pdf";
-    public static final String AD_PDF_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_PDF_FILE_NAME;
+    public static final String AD_PDF_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_PDF_FILE_NAME;
     private static Activity mActivity;
     private static ArrayList<Category> mCategories;
     private static ArrayList<Item> mItems;
@@ -175,7 +178,7 @@ public final class DBUtil {
                     return null;
                 }
 
-                final Ad ad = fetchAd(AD_TXT_DOWNLOAD_PATH);
+                final Ad ad = fetchAd(AD_TXT_DIR);
 
                 if (ad != null) {
                     Log.i(AdView.TAG, "Got Offline AD");
@@ -188,7 +191,7 @@ public final class DBUtil {
                     return null;
                 } else {
                     Log.i(AdView.TAG, "Downloading Ad");
-                    final String adTxtFilePath = LoadUtil.downloadFile(AD_TXT_DOWNLOAD_URL, AD_TXT_DOWNLOAD_PATH);
+                    final String adTxtFilePath = LoadUtil.downloadFile(AD_TXT_DOWNLOAD_URL, AD_TXT_DIR);
 
                     mAd = fetchAd(adTxtFilePath);
                 }
@@ -231,10 +234,10 @@ public final class DBUtil {
             final BufferedReader adFileReader = new BufferedReader(new FileReader(adTxtPath));
             ad = new Ad(adFileReader.readLine(), adFileReader.readLine()); //The reader moves from line to line
 
-            if (LoadUtil.fileExists(DBUtil.AD_PDF_PATH) && LoadUtil.fileExists(DBUtil.AD_IMAGE_PATH)) {
+            if (LoadUtil.fileExists(DBUtil.AD_PDF_DIR) && LoadUtil.fileExists(DBUtil.AD_IMAGE_DIR)) {
                 Log.i(AdView.TAG, "Got ad image and pdf offline");
-                ad.setImagePath(AD_IMAGE_PATH);
-                ad.setPdfPath(AD_PDF_PATH);
+                ad.setImagePath(AD_IMAGE_DIR);
+                ad.setPdfPath(AD_PDF_DIR);
             }
 
             adFileReader.close();
@@ -330,6 +333,23 @@ public final class DBUtil {
                 .show();
 
     }
+
+    public static void updateAd() {
+        deleteOldAd();
+        new File(AD_TXT_COPY_DIR).renameTo(new File(AD_TXT_DIR));
+        mAd = null;
+
+
+    }
+
+    private static void deleteOldAd() {
+        new File(DBUtil.AD_TXT_DIR).delete();
+        new File(DBUtil.AD_PDF_DIR).delete();
+        new File(DBUtil.AD_IMAGE_DIR).delete();
+
+    }
+
+
 
 
     public static interface OnInstallingDbListener {
