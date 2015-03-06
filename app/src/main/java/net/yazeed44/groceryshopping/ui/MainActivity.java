@@ -22,9 +22,10 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 
 import net.yazeed44.groceryshopping.R;
+import net.yazeed44.groceryshopping.requests.CheckAppStatusRequest;
+import net.yazeed44.groceryshopping.requests.CheckForAdUpdatesRequest;
+import net.yazeed44.groceryshopping.requests.CheckForDbUpdatesRequest;
 import net.yazeed44.groceryshopping.utils.Category;
-import net.yazeed44.groceryshopping.utils.CheckForAdUpdatesRequest;
-import net.yazeed44.groceryshopping.utils.CheckForDbUpdatesRequest;
 import net.yazeed44.groceryshopping.utils.DBUtil;
 import net.yazeed44.groceryshopping.utils.Item;
 import net.yazeed44.groceryshopping.utils.ViewUtil;
@@ -66,8 +67,10 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         initUtils();
 
         if (savedInstanceState == null) {
-            launchCheckDbUpdate();
-            launchCheckAdUpdate();
+            executeCheckDbUpdate();
+            executeCheckAdUpdate();
+            executeCheckAppStatus();
+
         }
 
         showCategories(savedInstanceState);
@@ -88,7 +91,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
     }
 
-    private void launchCheckDbUpdate() {
+    private void executeCheckDbUpdate() {
 
         final CheckForDbUpdatesRequest checkRequest = new CheckForDbUpdatesRequest(this);
         spiceManager.execute(checkRequest, new RequestListener<CheckForDbUpdatesRequest.Result>() {
@@ -122,7 +125,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         });
     }
 
-    private void launchCheckAdUpdate() {
+    private void executeCheckAdUpdate() {
         final CheckForAdUpdatesRequest checkRequest = new CheckForAdUpdatesRequest(this);
         spiceManager.execute(checkRequest, new RequestListener<CheckForAdUpdatesRequest.Result>() {
             @Override
@@ -137,7 +140,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
                 switch (result) {
 
                     case NEW_UPDATE:
-                        DBUtil.updateAd();
+                        DBUtil.resetAds();
                         onResume();
                         break;
 
@@ -148,6 +151,35 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             }
         });
 
+    }
+
+    private void executeCheckAppStatus() {
+        final CheckAppStatusRequest checkAppStatusRequest = new CheckAppStatusRequest(this);
+
+        spiceManager.execute(checkAppStatusRequest, new RequestListener<CheckAppStatusRequest.Result>() {
+            @Override
+            public void onRequestFailure(SpiceException spiceException) {
+
+            }
+
+            @Override
+            public void onRequestSuccess(CheckAppStatusRequest.Result result) {
+                Log.i(CheckAppStatusRequest.TAG, "Result is  " + result);
+
+                switch (result) {
+
+                    case SHOULD_CONTINUE:
+                        break;
+
+                    case SHOULD_STOP:
+                        throw new NullPointerException("This app isn't supposed to work");
+                        // finish();
+                        // break;
+
+                }
+
+            }
+        });
     }
 
 
@@ -439,7 +471,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
     }
 
     @Override
-    protected AdView onCreateAd() {
+    protected AdRecyclerView onCreateAd() {
         return null;
     }
 

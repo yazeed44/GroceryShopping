@@ -97,12 +97,12 @@ public class ItemsFragment extends BaseFragment {
     }
 
     @Override
-    protected AdView onCreateAdView() {
-        return (AdView) getView().findViewById(R.id.ad_view);
+    protected AdRecyclerView onCreateAdView() {
+        return (AdRecyclerView) getView().findViewById(R.id.ad_view);
     }
 
     @Override
-    protected void attachAdView(AdView adView) {
+    protected void attachAdView(AdRecyclerView adView) {
         adView.attachToRecyclerView(mItemsRecyclerView);
 
     }

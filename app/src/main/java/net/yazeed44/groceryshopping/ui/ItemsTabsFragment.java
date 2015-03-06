@@ -86,12 +86,12 @@ public class ItemsTabsFragment extends BaseFragment {
     }
 
     @Override
-    protected AdView onCreateAdView() {
+    protected AdRecyclerView onCreateAdView() {
         return null;
     }
 
     @Override
-    protected void attachAdView(AdView adView) {
+    protected void attachAdView(AdRecyclerView adView) {
 
     }
 

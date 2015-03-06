@@ -225,7 +225,7 @@ public class ItemsMsgActivity extends BaseActivity {
     }
 
     @Override
-    protected AdView onCreateAd() {
+    protected AdRecyclerView onCreateAd() {
         //TODO Implement Ad
         return null;
     }

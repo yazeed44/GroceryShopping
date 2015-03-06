@@ -41,7 +41,7 @@ public class ItemsDB {
         if (Thread.currentThread().getName().equals(Looper.getMainLooper().getThread().getName())) {
             throw new IllegalStateException("Don't use main thread to access the database !!");
         }
-        Log.i("ItemsDB : getInstance", Thread.currentThread().getName() + " is gonna take an instance!");
+        Log.d("ItemsDB : getInstance", Thread.currentThread().getName() + " is gonna take an instance!");
         return mInstance;
     }
 
@@ -51,7 +51,7 @@ public class ItemsDB {
 // Opening new database
             mDB = mHelper.getWritableDatabase();
         }
-        Log.i("ItemsDB : openDatabase", Thread.currentThread().getName() + " is gonna open it's database");
+        Log.d("ItemsDB : openDatabase", Thread.currentThread().getName() + " is gonna open it's database");
         return mDB;
     }
 
@@ -60,7 +60,7 @@ public class ItemsDB {
         if (mOpenCounter == 0) {
 // Closing database
             mDB.close();
-            Log.i("ItemsDB : closeDatabase", Thread.currentThread().getName() + " did close it's database");
+            Log.d("ItemsDB : closeDatabase", Thread.currentThread().getName() + " did close it's database");
         }
     }
 

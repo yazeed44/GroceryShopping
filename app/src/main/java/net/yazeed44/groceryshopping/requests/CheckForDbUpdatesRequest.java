@@ -1,4 +1,4 @@
-package net.yazeed44.groceryshopping.utils;
+package net.yazeed44.groceryshopping.requests;
 
 import android.content.Context;
 import android.os.Environment;
@@ -7,6 +7,8 @@ import android.util.Log;
 import com.octo.android.robospice.request.SpiceRequest;
 
 import net.yazeed44.groceryshopping.database.ItemsDBHelper;
+import net.yazeed44.groceryshopping.utils.DBUtil;
+import net.yazeed44.groceryshopping.utils.LoadUtil;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

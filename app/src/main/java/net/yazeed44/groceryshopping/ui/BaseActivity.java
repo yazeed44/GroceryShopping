@@ -14,7 +14,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 
     public SpiceManager spiceManager;
-    protected AdView mAdView;
+    protected AdRecyclerView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         return true;
     }
 
-    protected abstract AdView onCreateAd();
+    protected abstract AdRecyclerView onCreateAd();
 
     protected SpiceManager onCreateSpiceManager() {
         return new SpiceManager(OfflineSpiceService.class);

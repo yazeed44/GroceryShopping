@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.yazeed44.groceryshopping.ui.AdView xmlns:android="http://schemas.android.com/apk/res/android"
+<net.yazeed44.groceryshopping.ui.AdRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:id="@+id/ad_view"
-    android:layout_width="320dp"
+    android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:layout_gravity="center" />
+    android:layout_gravity="top|center"
+    android:visibility="gone" />

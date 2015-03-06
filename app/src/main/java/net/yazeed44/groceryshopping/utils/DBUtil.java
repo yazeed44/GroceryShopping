@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
@@ -15,14 +14,13 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.database.ItemsDB;
 import net.yazeed44.groceryshopping.database.ItemsDBHelper;
-import net.yazeed44.groceryshopping.ui.AdView;
+import net.yazeed44.groceryshopping.requests.DownloadAdsRequest;
+import net.yazeed44.groceryshopping.requests.InstallDbRequest;
+import net.yazeed44.groceryshopping.ui.AdRecyclerView;
 import net.yazeed44.groceryshopping.ui.BaseActivity;
 import net.yazeed44.groceryshopping.ui.MainActivity;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,15 +38,17 @@ public final class DBUtil {
     public static final String AD_TXT_COPY_FILE_NAME = "Ad_copy.txt";
     public static final String AD_TXT_COPY_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_TXT_COPY_FILE_NAME;
 
-    public static final String AD_IMAGE_FILE_NAME = "Ad-image.png";
+    public static final String AD_IMAGE_FILE_NAME = "Ad-image";
     public static final String AD_IMAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_IMAGE_FILE_NAME;
+    public static final String AD_IMAGE_FILE_TYPE_SUFFIX = ".png";
 
-    public static final String AD_PDF_FILE_NAME = "Ad-pdf.pdf";
+    public static final String AD_PDF_FILE_NAME = "Ad-pdf";
     public static final String AD_PDF_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_PDF_FILE_NAME;
+    public static final String AD_PDT_FILE_TYPE_SUFFIX = ".pdf";
     private static Activity mActivity;
     private static ArrayList<Category> mCategories;
     private static ArrayList<Item> mItems;
-    private static Ad mAd;
+    private static ArrayList<Ad> mAds = new ArrayList<>();
 
     private DBUtil() {
         throw new AssertionError();
@@ -77,7 +77,7 @@ public final class DBUtil {
                 new Category("vegatablesFruit", "الخضروات والفواكه", R.drawable.vegatablesfruit),
                 new Category("Grocery", "البقالة", R.drawable.grocery),
                 new Category("Pharmacy", "الصيدلية", R.drawable.pharmacy),
-                new Category("BakeryProducts", "المخبوزات", R.drawable.bakeryproducts),
+                new Category("BakeryProducts", "المخبوزات", R.drawable.bakery),
                 new Category("cleanTools", "أدوات التنظيف", R.drawable.cleantools),
                 new Category("spices", "البهارات", R.drawable.spices),
                 new Category("bookStore", "المكتبة", R.drawable.bookstore),
@@ -158,98 +158,42 @@ public final class DBUtil {
     }
 
 
-    public static void loadAd(final OnAdLoadingListener loadingListener) {
+    public static void loadAd(final DownloadAdsRequest.AdLoadingCallback loadingListener) {
 
 
-        new AsyncTask<Void, Void, Void>() {
+        if (mAds != null && !mAds.isEmpty()) {
+            Log.i(AdRecyclerView.TAG, "Device already has ads ");
+            loadingListener.adsDownloadedSuccessfully(mAds);
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                loadingListener.beforeDownloadingAd();
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
+            return;
+        }
 
 
-                if (mAd != null) {
-                    Log.i(AdView.TAG, "Got offline Ad");
-                    return null;
+        final DownloadAdsRequest downloadRequest = new DownloadAdsRequest(AdList.class, mActivity);
+
+        if (mActivity instanceof BaseActivity) {
+            ((BaseActivity) mActivity).spiceManager.execute(downloadRequest, new RequestListener<AdList>() {
+                @Override
+                public void onRequestFailure(SpiceException spiceException) {
+                    loadingListener.adFailedToDownload(spiceException);
                 }
 
-                final Ad ad = fetchAd(AD_TXT_DIR);
-
-                if (ad != null) {
-                    Log.i(AdView.TAG, "Got Offline AD");
-                    mAd = ad;
-                    return null;
-                }
-
-                if (!LoadUtil.isNetworkAvailable(mActivity)) {
-                    Log.w(AdView.TAG, "There's no connection to internet");
-                    return null;
-                } else {
-                    Log.i(AdView.TAG, "Downloading Ad");
-                    final String adTxtFilePath = LoadUtil.downloadFile(AD_TXT_DOWNLOAD_URL, AD_TXT_DIR);
-
-                    mAd = fetchAd(adTxtFilePath);
-                }
-
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                if (loadingListener != null) {
-                    if (mAd != null) {
-                        loadingListener.adDownloadedSuccessfully(mAd);
-                    } else {
-                        loadingListener.adFailedToDownload();
+                @Override
+                public void onRequestSuccess(AdList ads) {
+                    if (!ads.isEmpty()) {
+                        mAds = ads;
+                        loadingListener.adsDownloadedSuccessfully(mAds);
                     }
                 }
-
-
-            }
-
-
-        }.execute();
-
-
-    }
-
-    private static Ad fetchAd(final String adTxtPath) {
-
-        if (!LoadUtil.fileExists(adTxtPath)) {
-            return null;
+            });
         }
 
 
-        Ad ad;
-
-        try {
-            final BufferedReader adFileReader = new BufferedReader(new FileReader(adTxtPath));
-            ad = new Ad(adFileReader.readLine(), adFileReader.readLine()); //The reader moves from line to line
-
-            if (LoadUtil.fileExists(DBUtil.AD_PDF_DIR) && LoadUtil.fileExists(DBUtil.AD_IMAGE_DIR)) {
-                Log.i(AdView.TAG, "Got ad image and pdf offline");
-                ad.setImagePath(AD_IMAGE_DIR);
-                ad.setPdfPath(AD_PDF_DIR);
-            }
-
-            adFileReader.close();
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("fetchAd", e.getMessage());
-            ad = null;
-        }
 
-        return ad;
+
+
 
 
     }
@@ -302,6 +246,7 @@ public final class DBUtil {
         dialog.setCancelable(false);
         dialog.setProgressStyle(R.attr.progressBarStyle);
 
+
         return dialog;
     }
 
@@ -334,18 +279,21 @@ public final class DBUtil {
 
     }
 
-    public static void updateAd() {
+    public static void resetAds() {
         deleteOldAd();
         new File(AD_TXT_COPY_DIR).renameTo(new File(AD_TXT_DIR));
-        mAd = null;
+        mAds = null;
+        Ad.sCount = 0;
 
 
     }
 
     private static void deleteOldAd() {
-        new File(DBUtil.AD_TXT_DIR).delete();
-        new File(DBUtil.AD_PDF_DIR).delete();
-        new File(DBUtil.AD_IMAGE_DIR).delete();
+        LoadUtil.deleteFile(new File(DBUtil.AD_TXT_DIR));
+        for (final Ad ad : mAds) {
+            ad.deleteOldFilesIfExists();
+        }
+
 
     }
 
@@ -356,11 +304,5 @@ public final class DBUtil {
         void onDbInstalledSuccessful(final MainActivity activity);
     }
 
-    public static interface OnAdLoadingListener {
-        void beforeDownloadingAd();
 
-        void adDownloadedSuccessfully(final Ad ad);
-
-        void adFailedToDownload();
-    }
 }

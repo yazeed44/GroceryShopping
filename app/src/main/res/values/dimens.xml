@@ -4,8 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
 
-    <dimen name="category_width">100dp</dimen>
-    <dimen name="category_height">120dp</dimen>
+    <dimen name="category_width">30dp</dimen>
+    <dimen name="category_height">15dp</dimen>
     <dimen name="category_horizontal_spacing">3dp</dimen>
     <dimen name="category_vertical_spacing">3dp</dimen>
 

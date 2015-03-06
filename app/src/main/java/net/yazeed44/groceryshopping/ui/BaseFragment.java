@@ -22,7 +22,7 @@ public abstract class BaseFragment extends Fragment {
             ((MainActivity) getActivity()).showSearchView();
         }
 
-        final AdView adView = onCreateAdView();
+        final AdRecyclerView adView = onCreateAdView();
 
         if (adView != null) {
             adView.loadAd();
@@ -41,7 +41,7 @@ public abstract class BaseFragment extends Fragment {
         return true;
     }
 
-    protected abstract AdView onCreateAdView();
+    protected abstract AdRecyclerView onCreateAdView();
 
-    protected abstract void attachAdView(final AdView adView);
+    protected abstract void attachAdView(final AdRecyclerView adView);
 }

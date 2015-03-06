@@ -3,40 +3,21 @@
     android:id="@+id/category_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="right"
     android:orientation="vertical"
     android:paddingBottom="@dimen/category_vertical_spacing"
     android:paddingLeft="@dimen/category_horizontal_spacing"
     android:paddingRight="@dimen/category_horizontal_spacing"
-    android:paddingTop="@dimen/category_vertical_spacing">
+    android:paddingTop="@dimen/category_vertical_spacing"
+
+    >
 
     <ImageView
         android:id="@+id/category_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/desc_category_thumbnail"
-        android:scaleType="centerCrop"
+        android:scaleType="centerCrop" />
 
-        />
 
-    <FrameLayout
-        android:id="@+id/category_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-
-        >
-
-        <TextView
-            android:id="@+id/category_bottom_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
-            android:gravity="center"
-
-            android:text="الخضراوات"
-            android:textSize="16sp"
-
-            />
-
-    </FrameLayout>
 </FrameLayout>

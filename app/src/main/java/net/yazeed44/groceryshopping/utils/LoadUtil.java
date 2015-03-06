@@ -22,6 +22,7 @@ public final class LoadUtil {
 
     public static final int DOWNLOAD_BUFFER_SIZE = 16000;
     public static final String DOWNLOAD_FAILED = "DownloadFailed";
+    private static final String TAG = "LoadUtil";
 
     private LoadUtil() {
         throw new AssertionError("This is util class !!");
@@ -133,11 +134,6 @@ public final class LoadUtil {
     }
 
 
-
-
-
-
-
     public static boolean isDownloadedFileValid(final String filePath) {
 
         if (TextUtils.isEmpty(filePath) || DOWNLOAD_FAILED.equals(filePath)) {
@@ -153,6 +149,23 @@ public final class LoadUtil {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static void deleteFile(final File file) {
+
+
+        if (!file.exists()) {
+            return;
+        }
+
+        final boolean deleted = file.delete();
+
+        if (deleted) {
+            Log.i(TAG, "File deleted successfully  " + file.getName());
+
+        } else {
+            Log.w(TAG, "File failed to delete  " + file.getName());
+        }
     }
 
     public static boolean fileExists(final String path) {

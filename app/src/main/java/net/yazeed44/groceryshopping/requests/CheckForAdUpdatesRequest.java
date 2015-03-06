@@ -1,9 +1,12 @@
-package net.yazeed44.groceryshopping.utils;
+package net.yazeed44.groceryshopping.requests;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.octo.android.robospice.request.SpiceRequest;
+
+import net.yazeed44.groceryshopping.utils.DBUtil;
+import net.yazeed44.groceryshopping.utils.LoadUtil;
 
 import java.io.File;
 

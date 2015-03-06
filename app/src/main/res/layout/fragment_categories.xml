@@ -1,9 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/categories_fragment_ui_background"
     android:orientation="vertical">
 
-    <include layout="@layout/ad_view" />
+    <include layout="@layout/ad_view"
+
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/categories_recycler"

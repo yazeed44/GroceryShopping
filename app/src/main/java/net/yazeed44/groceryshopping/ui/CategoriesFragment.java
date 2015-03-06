@@ -1,8 +1,6 @@
 package net.yazeed44.groceryshopping.ui;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,15 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.utils.Category;
 import net.yazeed44.groceryshopping.utils.DBUtil;
-import net.yazeed44.groceryshopping.utils.PaletteLoader;
-import net.yazeed44.groceryshopping.utils.PaletteRequest;
 import net.yazeed44.groceryshopping.utils.ViewUtil;
 
 import java.util.ArrayList;
@@ -61,7 +54,7 @@ public class CategoriesFragment extends BaseFragment {
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.categories_column_num));
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        mCategoriesRecycler.setHasFixedSize(true);
+        //mCategoriesRecycler.setHasFixedSize(true);
         mCategoriesRecycler.setLayoutManager(gridLayoutManager);
 
         final CategoriesAdapter adapter = new CategoriesAdapter();
@@ -92,12 +85,12 @@ public class CategoriesFragment extends BaseFragment {
     }
 
     @Override
-    protected AdView onCreateAdView() {
-        return (AdView) getView().findViewById(R.id.ad_view);
+    protected AdRecyclerView onCreateAdView() {
+        return (AdRecyclerView) getView().findViewById(R.id.ad_view);
     }
 
     @Override
-    protected void attachAdView(AdView adView) {
+    protected void attachAdView(AdRecyclerView adView) {
         adView.attachToRecyclerView(mCategoriesRecycler);
     }
 
@@ -136,29 +129,15 @@ public class CategoriesFragment extends BaseFragment {
         private void loadCategory(final CategoryViewHolder holder, final Category category) {
 
 
-            ImageLoader.getInstance().displayImage("drawable://" + category.thumbnailRes, holder.thumbnail);
+            holder.thumbnail.setImageResource(category.thumbnailRes);
 
-            holder.title.setTypeface(ViewUtil.getRegularDefaultTypeface());
-            holder.title.setText(category.name);
+            final int width = getResources().getDimensionPixelSize(R.dimen.category_width);
 
-            final Bitmap photo = category.getThumbnail();
+            final int height = getResources().getDimensionPixelSize(R.dimen.category_height);
 
-            if (photo != null) {
-                final String id = holder.title.getText().toString();
-                final Context context = holder.thumbnail.getContext();
+            holder.thumbnail.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
 
-                PaletteLoader.with(context, id)
-                        .load(photo)
-                        .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.BACKGROUND))
-                        .into(holder.bottomBar);
-
-
-                PaletteLoader.with(context, id)
-                        .load(photo)
-                        .setPaletteRequest(new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.TEXT_TITLE))
-                        .into(holder.title);
-            }
         }
 
         @Override
@@ -178,10 +157,7 @@ public class CategoriesFragment extends BaseFragment {
 
         @InjectView(R.id.category_thumbnail)
         ImageView thumbnail;
-        @InjectView(R.id.category_bottom_title)
-        TextView title;
-        @InjectView(R.id.category_bottom_bar)
-        FrameLayout bottomBar;
+
 
         private CategoryListener listener;
 
