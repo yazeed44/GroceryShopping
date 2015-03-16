@@ -11,7 +11,7 @@ import java.util.List;
  */
 public final class ItemsMsgOrganizer {
 
-    private List<Item> mChosenItems;
+    private final List<Item> mChosenItems;
     private List<ItemsOrganized> mItemsOrganized;
 
     private ItemsMsgOrganizer(final List<Item> chosenItems) {

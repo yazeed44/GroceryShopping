@@ -1,16 +1,19 @@
 package net.yazeed44.groceryshopping.ui;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import net.yazeed44.groceryshopping.R;
 import net.yazeed44.groceryshopping.utils.Category;
@@ -51,14 +54,30 @@ public class CategoriesFragment extends BaseFragment {
 
     private void setupRecycler() {
 
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.categories_column_num));
+        final int columnCount = getResources().getInteger(R.integer.categories_column_num);
+
+        final int categoriesRecyclerHeight = (getResources().getDimensionPixelSize(R.dimen.category_height)) * ((mCategories.size()) / columnCount) + getResources().getDimensionPixelSize(R.dimen.category_recycler_height_offset);
+
+
+        final int categoriesRecyclerWidth = (getResources().getDimensionPixelSize(R.dimen.category_width) * columnCount) + getResources().getDimensionPixelSize(R.dimen.category_recycler_width_offset);
+
+        final int orientation = getActivity().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mCategoriesRecycler.setLayoutParams(new FrameLayout.LayoutParams(categoriesRecyclerWidth, categoriesRecyclerHeight, Gravity.RIGHT | Gravity.CENTER));
+        } else {
+            mCategoriesRecycler.setLayoutParams(new LinearLayout.LayoutParams(categoriesRecyclerWidth, categoriesRecyclerHeight));
+        }
+
+
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), columnCount);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        //mCategoriesRecycler.setHasFixedSize(true);
+        mCategoriesRecycler.setHasFixedSize(true);
         mCategoriesRecycler.setLayoutManager(gridLayoutManager);
 
         final CategoriesAdapter adapter = new CategoriesAdapter();
         mCategoriesRecycler.setAdapter(adapter);
+
 
     }
 
@@ -135,7 +154,7 @@ public class CategoriesFragment extends BaseFragment {
 
             final int height = getResources().getDimensionPixelSize(R.dimen.category_height);
 
-            holder.thumbnail.setLayoutParams(new FrameLayout.LayoutParams(width, height));
+            holder.thumbnail.setLayoutParams(new FrameLayout.LayoutParams(width, height, Gravity.RIGHT));
 
 
         }
@@ -155,22 +174,20 @@ public class CategoriesFragment extends BaseFragment {
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
 
+        private final CategoryListener mListener;
         @InjectView(R.id.category_thumbnail)
         ImageView thumbnail;
 
-
-        private CategoryListener listener;
-
         public CategoryViewHolder(View itemView, CategoryListener listener) {
             super(itemView);
-            this.listener = listener;
+            this.mListener = listener;
 
             ButterKnife.inject(this, itemView);
         }
 
         @OnClick(R.id.category_layout)
         public void onClickLayout(View itemView) {
-            listener.onClickCategory(itemView);
+            mListener.onClickCategory(itemView);
         }
 
     }

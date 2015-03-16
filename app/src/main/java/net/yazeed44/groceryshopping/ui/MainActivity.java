@@ -164,6 +164,11 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
             @Override
             public void onRequestSuccess(CheckAppStatusRequest.Result result) {
+
+                if (result == null) {
+                    return;
+                }
+
                 Log.i(CheckAppStatusRequest.TAG, "Result is  " + result);
 
                 switch (result) {
@@ -463,11 +468,11 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
     public void updateItemsFragment(final Category chosenCategory) {
 
-        //TODO Fix "Fragment is already active"
-        getSupportFragmentManager().beginTransaction().detach(mItemsFragment)
-                .attach(mItemsFragment)
-                .commit();
-        mItemsFragment.setCurrentPage(chosenCategory);
+        if (mItemsFragment != null && !mItemsFragment.isVisible()) {
+            return;
+        }
+
+        showItems(chosenCategory);
     }
 
     @Override

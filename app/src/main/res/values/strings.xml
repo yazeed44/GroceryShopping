@@ -48,6 +48,7 @@
     <string name="title_error_no_network">لايوجد أتصال بالانترنت</string>
     <string name="pos_btn_error_no_network">أتصل من جديد</string>
     <string name="toast_error_no_network">فشل في الإتصال</string>
-    <string name="toast_db_installed_successfully">تم تحميل البيانات بنجاح</string>>
+    <string name="toast_db_installed_successfully">تم تحميل البيانات بنجاح</string>
+    <string name="toast_error_no_pdf_program">لايوجد برنامج للتعامل مع ملف pdf</string>>
 
 </resources>

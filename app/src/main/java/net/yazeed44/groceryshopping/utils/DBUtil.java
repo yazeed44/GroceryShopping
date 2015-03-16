@@ -3,7 +3,6 @@ package net.yazeed44.groceryshopping.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.Environment;
 import android.util.Log;
 
@@ -121,9 +120,10 @@ public final class DBUtil {
             final SQLiteDatabase db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
             version = db.getVersion();
             db.close();
-        } catch (SQLiteException ex) {
-            version = -1;
+        } catch (Exception ex) {
             Log.e("getDBVersion", ex.getMessage());
+            version = -1;
+
         }
 
         return version;

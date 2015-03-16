@@ -53,7 +53,7 @@ public class CheckForDbUpdatesRequest extends SpiceRequest<CheckForDbUpdatesRequ
     }
 
     private void deleteDownloadedDB() {
-        new File(DB_DOWNLOAD_PATH).delete();
+        LoadUtil.deleteFile(new File(DB_DOWNLOAD_PATH));
     }
 
     private boolean newUpdateExists() {

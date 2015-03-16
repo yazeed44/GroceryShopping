@@ -48,9 +48,9 @@ public class CheckAppStatusRequest extends SpiceRequest<CheckAppStatusRequest.Re
         statusReader.close();
         LoadUtil.deleteFile(new File(appStatusTextFilePath));
 
-        if (statusText.equals("1")) {
+        if ("1".equals(statusText)) {
             return Result.SHOULD_CONTINUE;
-        } else if (statusText.equals("0")) {
+        } else if ("0".equals(statusText)) {
             return Result.SHOULD_STOP;
         }
 

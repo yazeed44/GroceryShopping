@@ -184,6 +184,7 @@ public class AdRecyclerView extends RecyclerView implements DownloadAdsRequest.A
             } catch (ActivityNotFoundException e) {
                 //TODO handle exception for not finding proper pdf reader
                 // Instruct the user to install a PDF reader here, or something
+                ViewUtil.toastShort(getContext(), R.string.toast_error_no_pdf_program);
             }
 
         }

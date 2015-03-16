@@ -73,7 +73,7 @@ public class CheckForAdUpdatesRequest extends SpiceRequest<CheckForAdUpdatesRequ
     }
 
     private void deleteNewAd() {
-        new File(DBUtil.AD_TXT_COPY_DIR).delete();
+        LoadUtil.deleteFile(new File(DBUtil.AD_TXT_COPY_DIR));
     }
 
 
