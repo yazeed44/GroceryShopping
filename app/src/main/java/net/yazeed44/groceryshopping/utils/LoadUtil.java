@@ -3,7 +3,6 @@ package net.yazeed44.groceryshopping.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -100,40 +99,6 @@ public final class LoadUtil {
     }
 
 
-    public static void loadFile(final String fileUrl, final String downloadPath, final OnLoadFileListener listener) {
-
-        new AsyncTask<Void, Void, Void>() {
-
-            String filePath;
-
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                if (new File(downloadPath).exists()) {
-                    filePath = downloadPath;
-                    return null;
-                }
-
-                filePath = downloadFile(fileUrl, downloadPath);
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                if (isDownloadedFileValid(filePath)) {
-                    listener.onDownloadedFileSuccessfully(filePath);
-                } else {
-                    listener.onFailedToDownloadFile();
-                }
-
-            }
-        }.execute();
-    }
-
-
     public static boolean isDownloadedFileValid(final String filePath) {
 
         if (TextUtils.isEmpty(filePath) || DOWNLOAD_FAILED.equals(filePath)) {
@@ -171,11 +136,4 @@ public final class LoadUtil {
     public static boolean fileExists(final String path) {
         return new File(path).exists();
     }
-
-    public static interface OnLoadFileListener {
-        void onDownloadedFileSuccessfully(final String filePath);
-
-        void onFailedToDownloadFile();
-    }
-
 }

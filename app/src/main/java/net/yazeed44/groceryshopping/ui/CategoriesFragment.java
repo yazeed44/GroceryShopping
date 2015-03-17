@@ -62,6 +62,7 @@ public class CategoriesFragment extends BaseFragment {
         final int categoriesRecyclerWidth = (getResources().getDimensionPixelSize(R.dimen.category_width) * columnCount) + getResources().getDimensionPixelSize(R.dimen.category_recycler_width_offset);
 
         final int orientation = getActivity().getResources().getConfiguration().orientation;
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             mCategoriesRecycler.setLayoutParams(new FrameLayout.LayoutParams(categoriesRecyclerWidth, categoriesRecyclerHeight, Gravity.RIGHT | Gravity.CENTER));
         } else {

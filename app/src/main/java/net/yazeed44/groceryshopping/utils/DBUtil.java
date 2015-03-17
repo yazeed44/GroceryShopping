@@ -92,6 +92,13 @@ public final class DBUtil {
 
     }
 
+    public static void resetCategoriesItems() {
+
+        for (final Category category : mCategories) {
+            category.resetItems();
+        }
+    }
+
     public static String getLocalDBPath(final Context context) {
         return context.getDatabasePath(ItemsDBHelper.DB_NAME).getAbsolutePath();
     }
@@ -280,7 +287,7 @@ public final class DBUtil {
     }
 
     public static void resetAds() {
-        deleteOldAd();
+        deleteOldAdText();
         new File(AD_TXT_COPY_DIR).renameTo(new File(AD_TXT_DIR));
         mAds = null;
         Ad.sCount = 0;
@@ -288,7 +295,7 @@ public final class DBUtil {
 
     }
 
-    private static void deleteOldAd() {
+    private static void deleteOldAdText() {
         LoadUtil.deleteFile(new File(DBUtil.AD_TXT_DIR));
         for (final Ad ad : mAds) {
             ad.deleteOldFilesIfExists();

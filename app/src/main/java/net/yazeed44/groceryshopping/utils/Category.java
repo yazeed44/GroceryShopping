@@ -1,6 +1,5 @@
 package net.yazeed44.groceryshopping.utils;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ public final class Category {
     public final int thumbnailRes;
     public final String tableName;
     private ArrayList<Item> mItems;
-    private Bitmap mBitmap;
 
     public Category(final String tableName, final String name, final int thumbnailRes) {
         this.tableName = tableName;
@@ -34,17 +32,13 @@ public final class Category {
         return mItems;
     }
 
-    public Bitmap getThumbnail() {
-        if (mBitmap != null) {
-            return mBitmap;
-        }
-
-        mBitmap = ViewUtil.drawableToBitmap(thumbnailRes);
-        return mBitmap;
-    }
-
     @Override
     public String toString() {
         return name;
+    }
+
+    public void resetItems() {
+        if (mItems != null)
+            mItems = null;
     }
 }

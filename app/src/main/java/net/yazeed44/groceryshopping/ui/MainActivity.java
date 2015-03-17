@@ -131,6 +131,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
             @Override
             public void onRequestFailure(SpiceException spiceException) {
 
+                Log.e("CheckAdUpdateException", spiceException.getMessage());
             }
 
             @Override
@@ -159,6 +160,7 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
         spiceManager.execute(checkAppStatusRequest, new RequestListener<CheckAppStatusRequest.Result>() {
             @Override
             public void onRequestFailure(SpiceException spiceException) {
+                Log.e("AppStatusException", spiceException.getMessage());
 
             }
 
@@ -468,11 +470,21 @@ public class MainActivity extends BaseActivity implements CategoriesFragment.OnC
 
     public void updateItemsFragment(final Category chosenCategory) {
 
+        DBUtil.resetCategoriesItems();
         if (mItemsFragment != null && !mItemsFragment.isVisible()) {
             return;
         }
 
-        showItems(chosenCategory);
+        getSupportFragmentManager().beginTransaction().detach(mItemsFragment)
+                .attach(mItemsFragment)
+                .commit();
+        mItemsFragment.setCurrentPage(chosenCategory);
+    }
+
+    private void restartActivity() {
+
+        final Intent restartIntent = new Intent(this, MainActivity.class);
+        startActivity(restartIntent);
     }
 
     @Override

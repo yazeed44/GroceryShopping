@@ -70,6 +70,7 @@ public class ItemsDB {
         try {
             mItemsCursor = mDB.rawQuery("SELECT * FROM " + category.tableName, null);
         } catch (SQLiteException ex) {
+            Log.e("SQLiteException", ex.getMessage());
             DBUtil.installNewDb(mHelper.context, new DBUtil.OnInstallingDbListener() {
                 @Override
                 public void onDbInstalledSuccessful(MainActivity activity) {
