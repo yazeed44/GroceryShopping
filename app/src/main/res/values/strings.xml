@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">جبها</string>
+    <string name="app_name">لاتنسى</string>
     <string name="desc_category_thumbnail">لمحة للتصنيف</string>
     <string name="content_new_update">هنالك تحديث جديد , هل تريد التحديث ؟</string>
     <string name="title_new_update">تحديث جديد</string>

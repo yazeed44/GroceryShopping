@@ -30,7 +30,7 @@ import java.util.Comparator;
  */
 public final class DBUtil {
 
-    public static final String AD_TXT_DOWNLOAD_URL = "https://www.dropbox.com/s/expf2eaqdktser8/AdTest.txt?dl=1";
+    public static final String AD_TXT_DOWNLOAD_URL = "https://www.dropbox.com/s/5ldbrexw92d1qo0/Ad.txt?dl=1";
     public static final String AD_TXT_FILE_NAME = "Ad.txt";
     public static final String AD_TXT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + AD_TXT_FILE_NAME;
 
